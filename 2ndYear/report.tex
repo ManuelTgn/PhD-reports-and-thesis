@@ -133,22 +133,121 @@ The importance of dependencies between TFBS nucleotides and how including them i
 Support Vector Machines (SVMs) \citep{boser1992training} have been successfully applied to different problems in computational biology \citep{ben2008support}, including TFBS motif discovery (\textbf{Fig.\ref{fig:md} (B)}). The general idea is to decompose the bound sequences (foreground dataset $S$) and the unbound sequences (background dataset $B$) in sequence elements of length $k$ ($k$-mers). The $k$-mers frequencies are then used as features to train a sequence similarity kernel \citep{ben2008support}, to discriminate between bound and unbound sequences. Generally, to each $k$-mer is assigned a weight proportional to its contribution to the definition of the positive or negative training sets, or to its likelihood of being a motif candidate. Although early $k$-mer based kernels \citep{leslie2001spectrum,eskin2002mismatch,kuang2005profile} were originally developed to tackle protein sequence homology problems, recently several SVM-based algorithms extending the original kernels were proposed to discover TFBS motifs. Kmer-SVM \citep{lee2011discriminative,fletez2013kmer} proposed a SVM-based method to discover TFBS motifs in ChIP-seq datasets. Kmer-SVM employs the spectrum kernel \citep{leslie2001spectrum}, which counts the exact matches for all contiguous $k$-mers in $S$ and $B$, building the $k$-mers feature space. By using a trie \citep{bodon2003trie} indexing $S$ and $B$, the algorithm runs in linear time. Although TFBS motifs contain highly degenerate non-informative positions, kmer-SVM does not explicitly accommodate such sequence variability by counting the frequency of exact $k$-mers matches. 
 %Agius and coworkers [103] introduced the di-mismatch kernel to train k-mer-based TFBS models on in vitro PBM and in vivo ChIP-seq data. The di-mismatch kernel is a first order Markov mismatch kernel based on dinucleotides alphabet, which handles sequence variability while accounting for dependencies between pairs of neighboring nucleotides. The authors showed that the di-mismatch kernel improves TFBS prediction in both PBM (training support vector regressors) and ChIP-seq data (training SVMs). The previous SVM-based methods generally employ small k values (~6-8), obtaining good results in discovering and predicting short binding sites. However, TFBS length ranges between 6-20 bp and the longer TFBS, such as CTCF (19 bp long), cannot be exhaustively characterized by short k-mers, without tiling overlapping subsequences across the binding sites. This issue cannot be simply addressed by increasing k, since considering longer k-mers results in sparse feature vectors, often leading to overfitting. Gapped-k-mers [104] tackle this problem by representing longer sequences as k-mers with gaps in the site non informative or highly variable positions, accounting for variability in the TFBS sequence and length. Gkm-SVM [105,106] extended kmer-SVM framework to use gapped-k-mers as feature sets used to train SVM kernels, increasing the k without suffering from overfitting problems and reducing the dependency of the algorithm performance from parameters choice. Using gapped-k-mers on complete ChIP-seq datasets, the authors showed that gkm-SVM performed better in discovering and predicting TFBS than other enumerative, alignment-based, and SVM-based methods. Moreover, the algorithm was furtherly optimized in LS-GKM [107], enabling SVM kernel training on large scale ChIP-seq datasets.
 
-% ------ Motif Graphs
-\mychapter{4}{Motif Graphs}
+% ------ Motif Graph
+\mychapter{3}{Motif Graph}
 Several studies showed that TFs present population-specific \citep{kasowski2010variation}, cell-type-specific \citep{gertz2013distinct,arvey2012sequence}, and even individual-specific \citep{tognon2021grafimo} binding sites. Algorithms analyzing only the reference genome would provide general models, which could return wrong TFBS predictions when analyzing personal genomic sequences. Motif models integrating data from different populations, cell-types, or individuals would recover more reliable TFBS occurrence predictions (\textbf{Fig.\ref{fig:ctcf_mg} (A)}).
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{figures/ctcf_mg.jpg}
-	\caption[Comparison between CTCF MotifGraph model and its PWM from the JASPAR database.]{\textbf{Comparison between CTCF MotifGraph model and its PWM from the JASPAR database}}
+	\caption[Comparison between CTCF Motif Graph model and its PWM from the JASPAR database.]{\textbf{Comparison between CTCF MotifGraph model and its PWM from the JASPAR database.} On top the CTCF motif available on JASPAR database (MA0139.1). On the bottom the Motif Graph model trained using 100 $k$-mers obtained from a ChIP-seq experiment trageting CTCF binding site on HepG2 cell line.}
 	\label{fig:ctcf_mg}
 \end{figure} 
-
-
-Moreover, such models would better predict the consequences of noncoding variants on TF-DNA binding events, and they could encode variable orders of nucleotide dependencies. Importantly, graph data structures are often interpretable and intuitive. With this aims in mind we developed the Motif Graphs, a framework integrating the advantages of \emph{probabilistic graphical models-based} and \emph{SVM-based} motif discovery algorithms, without sacrificing model interpretability. A Motif Graph model $G$ is defined by a set of vertices $V$, a set of edges $E$, and a set of paths $P$. Each vertex $v \in V$ on the graph is labeled with a nucleotide, or mathematically $label(v) \in \{A, C, G, T\}$. Each edge $e \in E$ represents the allowed links between consecutive nucleotides in the TFBS motif. Each path $p \in P$ represents a \emph{haplotype} embedded in $G$, which correspond to one sequence used to train the Motif Graph model. Currently, the model is limited to encode $1$st order dependencies between consecutive nucleotides. However, the model is flexible and accomodate variable length motifs, beside recording the training sequences.
+Moreover, such models would better predict the consequences of noncoding variants on TF-DNA binding events, and they could encode variable orders of nucleotide dependencies. Importantly, graph data structures are often interpretable and intuitive. With this aims in mind we developed the Motif Graph, a framework integrating the advantages of \emph{probabilistic graphical models-based} and \emph{SVM-based} motif discovery algorithms, without sacrificing model interpretability. A Motif Graph model $G$ is defined by a set of vertices $V$, a set of edges $E$, and a set of paths $P$. Each vertex $v \in V$ on the graph is labeled with a nucleotide, or mathematically $label(v) \in \{A, C, G, T\}$. Each edge $e \in E$ represents the allowed links between consecutive nucleotides in the TFBS motif. Each path $p \in P$ represents a \emph{haplotype} embedded in $G$, which correspond to one sequence used to train the Motif Graph model. Currently, the model is limited to encode $1$st order dependencies between consecutive nucleotides. However, the model is flexible and accomodate variable length motifs, beside recording the training sequences.
 % ---- Motif Graph model construction
 \section{Motif Graph model construction}
+Motif Graph motif discovery procedure (\textbf{Algorithm \ref{algo:md_mg}}) is constitued of two main steps: $k$-mers prioritization, and graph model training and construction. To prioritize the $k$-mers Motif Graph currently employs the $k$-mer based motif discovery procedure implemented in Gkm-SVM \citep{ghandi2014enhanced}. Therefore, given a positive sequence dataset $S$ and a background dataset $B$, for each $k$-mer of length $k$ in $S$, the algorithm counts the number of matches in $S$ and in $B$, allowing mismatching positions (see \textbf{Section 2.1.2} for further details). Then, a similarity kernel is trained using the recovered $k$-mers frequencies. The trained kernel assigns to each $k$-mer in $S$ and in $B$ a weight proportional to its contribution in defining the foreground or the background dataset. The algorithm then ranks the $k$-mers according to their weight scores. The Motif Graph model is iteratively trained employing a greedy approach, which adds the top ranked $k$-mers to $G$ incrementally, one by one (see \textbf{Algorithm \ref{algo:mt_mg}} for details). Each $k$-mer is aligned to the current $G$ to maximize the number of nucleotides matching the current model. While aligning the $k$-mers to the current Motif Graph model, the algorithm shifts the input $k$-mer on the right and on the left up to a defined offset number of nucleotides. In our experiments with set the offset to $3$. Once built the model, we construct a scoring matrix similar to the widely used $PSSM$. However, our scoring matrix account for $1$st order dependencies between nucleotides, recalling the well-known DWMs (see \textbf{Section 2.1.3} for details). The scoring matrix is used to assign a likelihood score and classify new sequences as potentially bound or not bound by the investigated factor. In other words, the score describes how likely is the scanned sequence to contain a potential binding site. To score a sequence we slide the scoring matrix along the string employing a procedure similar to classical PWM scanning tools like FIMO \citep{grant2011fimo}.
+\begin{algorithm}
+	\DontPrintSemicolon
+	\KwInput{$S$, $B$, $k$}
+	\KwOutput{$G$}
 
+	frequencies $\gets$ countFrequencies($S$, $B$, $k$)
 
+	kernel $\gets$ trainKernel(frequencies)
+
+	kmers, weights $\gets$ extractWeights(kernel)
+
+	rankedKmer $\gets$ sort(kmers, weights)
+
+	$G \gets \emptyset$
+
+	\For{kmer in rankedKmers}
+	{
+		$G \gets$ addKmers($G$, kmer)
+	}
+
+	\Return{$G$}
+	\caption{\textbf{Motif Graph motif discovery.}}
+	\label{algo:md_mg}
+\end{algorithm}
+\begin{algorithm}
+	\DontPrintSemicolon
+	\KwInput{$G$, kmer, $i$}
+	\KwOutput{$G$}
+	
+	\If{$i = 1$}
+	{
+		\Return{$G$}
+	}
+
+	\For{$j$ in $1$ to $3$}
+	{
+		matchesLeftOffset, alignmnetLeft $\gets$ countMatchesLeftOffset($G$, kmer, $j$)
+	}
+
+	\For{$j$ in $1$ to $3$}
+	{
+		matchesRightOffset, alignmnetRight $\gets$ countMatchesRightOffset($G$, kmer, $j$)
+	}	
+	
+	alignment $\gets$ getBestAlignment(matchesLeftOffset, alignmentLeft, matchesRightOffset, alignmentRight)
+
+	$G \gets$ insertKmer($G$, alignment)
+
+	\Return{$G$}
+	\caption{\textbf{Motif Graph model training.}}
+	\label{algo:mt_mg}
+\end{algorithm}
+\section{Results}
+To test our motif discovery algorithm we obtained $10,000$ ChIP-seq peak sequences from the ENCODE Project database \citep{encode2012integrated} for CTCF and GATA1 Transcription Factors, obtained on the HepG2 and K562 cell lines, respectively. The original ChIP-seq datasets were sorted according to the peaks enrichment score in decreasing order, in order to test our algorithm on reliable peaks. Interestingly, the trained Motif Graph models were closed to the motifs PWM available on the JASPAR database \citep{sandelin2004jaspar} for both CTCF and GATA1 (\textbf{Fig.\ref{fig:ctcf_mg}} and \textbf{Fig.\ref{fig:gata1_mg}}). For both TFs, the Motif Graph models captured the main motif sequence. The main motifs are also enforced by the edge thickness which is proportional to the number of training $k$-mers supporting each $p \in P$.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/gata1_mg.jpg}
+	\caption[Comparison between GATA1 Motif Graph model and its PWM from the JASPAR database.]{\textbf{Comparison between GATA1 MotifGraph model and its PWM from the JASPAR database.} On top the GATA1 motif available on JASPAR database (MA0035.4). On the bottom the Motif Graph model trained using 100 $k$-mers obtained from a ChIP-seq experiment trageting GATA1 binding site on K562 cell line.}
+	\label{fig:gata1_mg}
+\end{figure} 
+Then, we tested the discriminative performance of both Motif Graph model, with different number of training $k$-mers (\textbf{Fig.\ref{fig:dp_mg}}), to establish the optimal number of training sequences for the CTCF and GATA1 Motif Graph models. To compare the models discriminative performance, we performed a cross-validation experiment using splitting the $S$ and $B$ dataset in training and testing set (75\% and 25\%, respectively). We trained the models with $10$, $50$, $100$, $200$, $350$, $500$, and $750$ $k$-mers. For CTCF the best prformance in terms of both AUC ($0.72$) and F1-score ($0.71$) were obtained training the Motif Graph on $100$ $k$-mers (\textbf{Table \ref{table:ctcf_auc_f1}}). For GATA1 the model returned the best AUC using $200$ $k$-mers ($0.76$), while the best F1-score ($0.70$) was obtained training the model with $100$ sequences (\textbf{Table \ref{table:gata1_auc_f1}}).
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/dp_mg.jpg}
+	\caption[Precision-Recall curves obtained varying the number of $k$-mers used to train the Motif Graph models.]{\textbf{Precision-Recall curves obtained varying the number of $k$-mers used to train the Motif Graph models.} To establish the number of training $k$-mers returning the best discriminative performance we computed the Precision-Recall curves of different Motif Graph models trained using 10, 50, 100, 200, 350, 500, and 750 $k$-mers on \textbf{(A)} CTCF and \textbf{(B)} GATA1}
+	\label{fig:dp_mg}
+\end{figure} 
+\begin{table}
+	\centering
+	\begin{tabular}{|p{3cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|}
+		\hline
+		\textbf{Training $k$-mers}& \textbf{$10$}& \textbf{$50$}& \textbf{$100$}& \textbf{$200$}& \textbf{$350$}& \textbf{$500$}& \textbf{$750$} \\
+		\hline
+		\textbf{AUC}& $0.69$& $0.69$& $0.72$& $0.63$& $0.60$& $0.55$& $0.55$\\
+		\hline
+		\textbf{F1-score}& $0.62$& $0.69$& $0.71$& $0.65$& $0.62$& $0.57$& $0.56$\\
+		\hline
+	\end{tabular}
+	\caption[CTCF Motif Graph model AUC and F1-scores values with different number of training $k$-mers.]{\textbf{CTCF Motif Graph model AUC and F1-scores values with different number of training $k$-mers.}}
+	\label{table:ctcf_auc_f1}
+\end{table}
+\begin{table}
+	\centering
+	\begin{tabular}{|p{3cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|}
+		\hline
+		\textbf{Training $k$-mers}& \textbf{$10$}& \textbf{$50$}& \textbf{$100$}& \textbf{$200$}& \textbf{$350$}& \textbf{$500$}& \textbf{$750$} \\
+		\hline
+		\textbf{AUC}& $0.73$& $0.75$& $0.75$& $0.76$& $0.74$& $0.74$& $0.71$\\
+		\hline
+		\textbf{F1-score}& $0.68$& $0.68$& $0.70$& $0.69$& $0.70$& $0.69$& $0.67$\\
+		\hline
+	\end{tabular}
+	\caption[GATA1 Motif Graph model AUC and F1-scores values with different number of training $k$-mers.]{\textbf{GATA1 Motif Graph model AUC and F1-scores values with different number of training $k$-mers.}}
+	\label{table:gata1_auc_f1}
+\end{table}
+Then, we compared the Motif Graph models discriminative performance against the corresponding PWM and DWM models, recovered from JASPAR \citep{sandelin2004jaspar} and HOCOMOCO \citep{kulakovskiy2016hocomoco} databases, respectively. For CTCF, both the PWM and the DWM models returned better predictive performance than our model (\textbf{Fig.\ref{fig:dp_mg_pwm_dwm} (A)}). On the other hand, on GATA1 data our model showed better performance than PWMs, but still performed worse than DWMs (\textbf{Fig.\ref{fig:dp_mg_pwm_dwm} (B)}).
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/dp_mg_pwm_dwm.jpg}
+	\caption[Comparing Motif Graph, PWM, and DWM Precision-Recall curves.]{\textbf{Comparing Motif Graph, PWM, and DWM Precision-Recall curves.} We compared the discriminative power of the Motif Graph models against that of PWMs and DWMs for both \textbf{(A)} CTCF and \textbf{(B)} GATA1.}
+	\label{fig:dp_mg_pwm_dwm}
+\end{figure} 
 
 
 % ------  begin bibliography
