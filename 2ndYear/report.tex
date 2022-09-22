@@ -67,7 +67,7 @@
 	\Scuola {Ph.D. in Computer Science}
 	\Annoaccademico {2021--2022}
 	\Titoletto {Second Year Report}
-	\Titolo {Predicting genetic variants effect on genome regulatory elements and CRISPR off-targets}
+	\Titolo {Predicting genetic variants effect on genomic Regulatory Elements and CRISPR off-targets}
 	\Candidato [VR456869]{Manuel Tognon}
 	\NCandidato {Student}
 	\NRelatore {Supervisor}{}
@@ -135,8 +135,8 @@ The importance of dependencies between TFBS nucleotides and how including them i
 Support Vector Machines (SVMs) \citep{boser1992training} have been successfully applied to different problems in computational biology \citep{ben2008support}, including TFBS motif discovery (\textbf{Fig.\ref{fig:md} (B)}). The general idea is to decompose the bound sequences (foreground dataset $S$) and the unbound sequences (background dataset $B$) in sequence elements of length $k$ ($k$-mers). The $k$-mers frequencies are then used as features to train a sequence similarity kernel \citep{ben2008support}, to discriminate between bound and unbound sequences. Generally, to each $k$-mer is assigned a weight proportional to its contribution to the definition of the positive or negative training sets, or to its likelihood of being a motif candidate. Although early $k$-mer based kernels \citep{leslie2001spectrum,eskin2002mismatch,kuang2005profile} were originally developed to tackle protein sequence homology problems, recently several SVM-based algorithms extending the original kernels were proposed to discover TFBS motifs. Kmer-SVM \citep{lee2011discriminative,fletez2013kmer} proposed a SVM-based method to discover TFBS motifs in ChIP-seq datasets. Kmer-SVM employs the spectrum kernel \citep{leslie2001spectrum}, which counts the exact matches for all contiguous $k$-mers in $S$ and $B$, building the $k$-mers feature space. By using a trie \citep{bodon2003trie} indexing $S$ and $B$, the algorithm runs in linear time. Although TFBS motifs contain highly degenerate non-informative positions, kmer-SVM does not explicitly accommodate such sequence variability by counting the frequency of exact $k$-mers matches. 
 %Agius and coworkers [103] introduced the di-mismatch kernel to train k-mer-based TFBS models on in vitro PBM and in vivo ChIP-seq data. The di-mismatch kernel is a first order Markov mismatch kernel based on dinucleotides alphabet, which handles sequence variability while accounting for dependencies between pairs of neighboring nucleotides. The authors showed that the di-mismatch kernel improves TFBS prediction in both PBM (training support vector regressors) and ChIP-seq data (training SVMs). The previous SVM-based methods generally employ small k values (~6-8), obtaining good results in discovering and predicting short binding sites. However, TFBS length ranges between 6-20 bp and the longer TFBS, such as CTCF (19 bp long), cannot be exhaustively characterized by short k-mers, without tiling overlapping subsequences across the binding sites. This issue cannot be simply addressed by increasing k, since considering longer k-mers results in sparse feature vectors, often leading to overfitting. Gapped-k-mers [104] tackle this problem by representing longer sequences as k-mers with gaps in the site non informative or highly variable positions, accounting for variability in the TFBS sequence and length. Gkm-SVM [105,106] extended kmer-SVM framework to use gapped-k-mers as feature sets used to train SVM kernels, increasing the k without suffering from overfitting problems and reducing the dependency of the algorithm performance from parameters choice. Using gapped-k-mers on complete ChIP-seq datasets, the authors showed that gkm-SVM performed better in discovering and predicting TFBS than other enumerative, alignment-based, and SVM-based methods. Moreover, the algorithm was furtherly optimized in LS-GKM [107], enabling SVM kernel training on large scale ChIP-seq datasets.
 
-% ------ Motif Graph
-\mychapter{3}{Motif Graph}
+% ------ Motif Graphs
+\mychapter{3}{Motif Graphs}
 Several studies showed that TFs present population-specific \citep{kasowski2010variation}, cell-type-specific \citep{gertz2013distinct,arvey2012sequence}, and even individual-specific \citep{tognon2021grafimo} binding sites. Algorithms analyzing only the reference genome would provide general models, which could return wrong TFBS predictions when analyzing personal genomic sequences. Motif models integrating data from different populations, cell-types, or individuals would recover more reliable TFBS occurrence predictions (\textbf{Fig.\ref{fig:ctcf_mg} (A)}).
 \begin{figure}
 	\centering
@@ -250,7 +250,62 @@ Then, we compared the Motif Graph models discriminative performance against the 
 	\caption[Comparing Motif Graph, PWM, and DWM Precision-Recall curves.]{\textbf{Comparing Motif Graph, PWM, and DWM Precision-Recall curves.} We compared the discriminative power of the Motif Graph models against that of PWMs and DWMs for both \textbf{(A)} CTCF and \textbf{(B)} GATA1.}
 	\label{fig:dp_mg_pwm_dwm}
 \end{figure} 
-
+% ------- Variant effects prediction on Transcription Factor Binding Sites
+\mychapter{5}{Variant effects prediction on Transcription Factor Binding Sites}
+Several studies showed that genetic variants can significantly impact TF-DNA binding events \citep{de2006regulatory,weinhold2014genome,guo2018mutation}. Genome-wide association studies (GWASs) uncovered thousands of genetic variants (SNPs), associated with complex human traits, located in noncoding regions of the genome. Most of these variants are located within functional regulatory elements, like enhancers \citep{maurano2012systematic}. Therefore, misregulations in gene expression may be mediated by SNPs modulating TF-DNA interactions. Such variants may perturb TF-DNA binding sequences, potentially changing the downstream gene expression \citep{deplancke2016genetics}. Importantly, mutations altering TFBS can occur in haplotypes conserved within a population of individuals \citep{kasowski2010variation}, resulting in population specific TFBS. Similarly, cell-type genetic variability can create cell-type specific TF target sequences. Therefore, the development of software designed to predict the potential effects of genetic variation on TFBS specificity accounting for haplotype- and cell-type specific mutations becomes fundamental to increase our knowledge about the cell mechanisms governing gene expression. To this aim, we developed two tools predicting mutations effects on TFBS in haplotypes and different cell-types. GRAFIMO \citep{tognon2021grafimo} is a variant- and haplotype-aware motif scanning tool searching potential occurrences of known TF motifs on genome graphs \citep{paten2017genome}. Briefly, genome graphs are graph-based data structures, where nodes correspond to DNA sequences and edges describe allowed links between successive sequences. Paths through the graph, which may be labelled (such as in the case of a reference genome), correspond to haplotypes belonging to different genomes \citep{siren2020haplotype} (\textbf{Fig.\ref{fig:vg}}).
+Variants like SNPs and indels form bubbles in the graph, where diverging paths through the graph are anchored by a common start and end sequence on the reference
+[138]. 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/vg.jpg}
+	\caption[Genome Graphs data structure visualization]{\textbf{Genome Graphs data structure visualization.}  Each color corresponds to a path in the graph. Each path represents the genomic sequences of one of the individual genomes encoded in the Genome Graph structure.}
+	\label{fig:vg}
+\end{figure} 
+MotifRaptor \citep{yao2021motif} investigates the impact of genetic variants on TF, exploiting cell-type specific information regarding chromatin accessibility and gene expression. While the original MotifRaptor used PWM models to assess genetic variants effects, we extended the framework to integrate $k$-mer-based motif models (see \textbf{Section 2.1.3} for details), which provide more reliable predictions.
+% ---- GRAFIMO
+\section{GRAFIMO}
+GRAFIMO (GRAph-based Finding of Individual Motif Occurrences) \citep{tognon2021grafimo} is a command-line tool to scan known TF DNA motifs represented as PWMs in genome variation graphs (VGs) \citep{garrison2018variation}, a scalable and efficient implement of genome graph framework. GRAFIMO extends the standard PWM scanning procedure by considering variations and alternative haplotypes encoded in a VG. Using GRAFIMO on a VG based on individuals from the 1000 Genomes project \citep{siva20081000} we recover several potential binding sites that are enhanced, weakened or missed when scanning only the reference genome, and which could constitute individual-specific binding events. During the last decade, several methods have been developed to search TFBS on linear reference genomes, such as FIMO \citep{grant2011fimo} and MOODS \citep{korhonen2009moods} or to account for SNPs and short indels such as is-rSNP, TRAP and atSNP \citep{macintyre2010rsnp,thomas2011transcription,zuo2015atsnp}, however these tools do not account for individual haplotypes nor provide summary on the frequency of these events in a population. We observed that several CTCF motif occurrences are found only in non-reference haplotypes, therefore a consistent number of potential motif occurrences are potentially lost when scanning only the reference sequence (\textbf{Fig.\ref{fig:grafimo1} (A)}). 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/grafimo1.jpg}
+	\caption[Searching CTCF motif on VG with GRAFIMO provides an insight on how genetic variation affects putative
+binding sites]{\textbf{Searching CTCF motif on VG with GRAFIMO provides an insight on how genetic variation affects putative
+binding sites. (A)} Potential CTCF occurrences statistically significant (P-value < 1e-4) and non-significant found in the
+reference and in the haplotype sequences found with GRAFIMO oh hg38 1000GP VG. (\textbf{B)} Statistical significance of
+retrieved potential CTCF motif occurrences and frequency of the corresponding haplotypes embedded in the VG. \textbf{(C)}
+Percentage of statistically significant CTCF potential binding sites found only in the reference genome or alternative
+haplotypes and with modulated binding scores based on 1000GP genetic variants \textbf{(D)} Percentage of population specific and
+common (shared by two or more populations) potential CTCF binding sites present on individual haplotypes.}
+	\label{fig:grafimo1}
+\end{figure} 
+Moreover, we found several potential CTCF occurrences with high statistical significance occurring in rare haplotypes, which could modulate gene expression in those subjects (\textbf{Fig.\ref{fig:grafimo1} (B)}). We also investigated how often regulatory mutations disrupt, create or modulate TFBS binding affinity. Interestingly, we observed that many TFBS can be found only on individual
+haplotypes. Moreover, ~ 6\% of TFBS are disrupted (do not survive the ss threshold) by the presence of genetic variants, while ~30\% of potential CTCF TFBS are still significant in non-reference haplotypes, but with enhanced or weakened ba score (\textbf{Fig.\ref{fig:grafimo1} (C)}). We also observed that several putative non-reference TFBS are population-specific (\textbf{Fig.\ref{fig:grafimo1} (D)}). Among the unique CTCF motif occurrences found only on non-reference haplotypes in CTCF ChIP-seq peaks we uncovered one
+TFBS (chr19:506,910-506,929) that clearly illustrates the danger of only using reference genomes for motif scanning. Within this region we recovered a heterozygous SNP that overlaps (position 10 of the CTCF matrix) and significantly modulates the binding affinity of this TFBS. In fact, by inspecting the ChIP-seq reads (experiment ENCSR000DZN, GM12878 cell line), we observed a clear allelic imbalance towards the alternative allele \texttt{G} (70.59\% of reads) with respect to the reference allele \texttt{A} (29.41\% of reads). This allelic imbalance is not observed in the reads used as control (experiment code ENCSR000EYX) (\textbf{Fig.\ref{fig:grafimo2}}). Taken together these results highlight the importance of considering non-reference genome data when searching for potential TFBS or to characterize their potential activity in a population of individuals.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/grafimo2.jpg}
+	\caption[Considering genomic variation, GRAFIMO captures more potential binding events]{\textbf{Considering genomic variation, GRAFIMO captures more potential binding events.} GRAFIMO reports a potential CTCF binding site at chr19:506,910-506,929 found only in haplotype sequences, searching the motif in ChIP-seq peaks called on cell line GM12878 (experiment code ENCSR000DZN). The reads used to call for ChIP-seq peaks (ENCFF162QXM) show an allelic imbalance at position 10 of the motif sequence towards the alternative allele \texttt{G}, instead of the reference allele \texttt{A}. The imbalance is captured by GRAFIMO which reports the sequence presenting \texttt{G} at position 10 (found in the haplotypes), while the potential TFBS on the reference carrying an \texttt{A} is not reported as statistically significant ($P$-value > 1e-4). CTCF motif logo shows that the \texttt{G} is the dominant nucleotide in position 10.}
+	\label{fig:grafimo2}
+\end{figure} 
+% ---- MotifRaptor2
+\section{MotifRaptor2}
+Several studies showed that genetic variants can enhance or disrupt TF-DNA binding affinities. Moreover, most of the SNPs ($\sim90\%$) associated to common diseases and complex phenotypical traits thorugh GWAS analyses have been located within REs, such as enhancers or promoters. MotifRaptor exploits cell-type specific data, like chromatin accessibility and gene expression, to predict the impact of SNPs prioritized via GWAS on TFBS sequence and the corresponding TF-DNA interactions. MotifRaptor workflow is currently constitued of three steps (\textbf{Fig.\ref{fig:motifraptor1}}). (i) TCharacterize important cell-types through the enrichment of the phenotype associated SNPs in open chromatin regions. (ii) Search TFBS whose binding potential is significantly modulated by the previously prioritized variants, in the investigated cell-types. (iii) Identify and visualize individual TF-SNP modulation events. 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/motifraptor1.jpg}
+	\caption[MotifRaptor analysis workflow]{\textbf{MotifRaptor analysis workflow.} Three steps are performed: (1) characterize
+relevant cell types based on the enrichment of phenotype associated SNPs in chromatin accessible
+sites, (2) find TFs with binding sites that are significantly modulated by genetic variants in these
+cell types and (3) identify and visualize individual TF-SNP regulation events}
+	\label{fig:motifraptor1}
+\end{figure} 
+The original MotifRaptor employed TFBS PWM models to predict SNP impact on the binding sites of the investigated factor. However, PWMs have several limitations, like the assumption of independence between neighboring and non-neighboring nucleotides within TF target sites, and often they require large amount of training data to return reliable models \citep{zhao2011quantitative} (see \textbf{Section 2.1.3} for details). $K$-mer-based motif models address some of PWMs' limitations. (i) $K$-mers are features that are either present or not in the training dataset, therefore, the resulting models do not require large amount of training data. (ii) $K$-mers capture $k$th order dependencies between neighboring nucleotides. Therefore, we extended the MotifRaptor analysis to consider $k$-mer-based motif models to assess the impact of genetic variants on TFBS. With this aim we integrated Gkm-SVM analysis pipeline in MotifRaptor framework, to compute sequence scores reflecting SNPs impact on binding sites. Interestingly, as preliminary results we observed that $k$-mer-based models provide better predictions than PWMs, when classifying bound and unbound sequences (ChIP-seq peak and random sequences, respectively) (\textbf{Fig.\ref{fig:motifraptor2}}).
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/motifraptor2.jpg}
+	\caption[Precision-Recall curves for NFKB1 models ($k$-mers and PWM) and AUC]{\textbf{Precision-Recall curves for NFKB1 models ($k$-mers and PWM) and AUC.}}
+	\label{fig:motifraptor2}
+\end{figure} 
 
 % ------  begin bibliography
 \bibliography{biblio}
