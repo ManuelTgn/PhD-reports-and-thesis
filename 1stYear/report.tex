@@ -1,0 +1,95 @@
+\documentclass[a4paper, titlepage, openright]{book}
+
+\usepackage[english]{babel}
+\usepackage{frontespizio}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{textcomp}
+\usepackage{mathtools, nccmath}
+\usepackage[left=3cm,right=2cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{rotating}
+\usepackage{subfigure}
+\usepackage{url}
+
+% force page number on page bottom part
+\usepackage{fancyhdr} 
+\fancyhf{}
+\cfoot{\thepage}
+\pagestyle{fancy}
+
+% These Commands create the label style for tables, figures and equations.
+\usepackage[labelfont={footnotesize,bf} , textfont=footnotesize]{caption}
+\captionsetup{labelformat=simple, labelsep=period}
+\newcommand\num{\addtocounter{equation}{1}\tag{\theequation}}
+\renewcommand{\theequation}{\arabic{equation}}
+\makeatletter
+\renewcommand\tagform@[1]{\maketag@@@ {\ignorespaces {\footnotesize{\textbf{Equation}}} #1.\unskip \@@italiccorr }}
+\makeatother
+\setlength{\intextsep}{10pt}
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{-10pt}
+
+\renewcommand{\textfraction}{0.10}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\floatpagefraction}{0.90}
+
+% This styles the bibliography and citations.
+\usepackage{natbib}
+\setlength\bibindent{2em}
+\makeatletter
+\setlength{\bibsep}{0pt plus 0.3ex}
+
+% redefine chapter -> no labeling with 1, 2, etc.
+\newcommand{\mychapter}[2]{
+    \setcounter{chapter}{#1}
+    \setcounter{section}{0}
+    \chapter*{#2}
+    \addcontentsline{toc}{chapter}{#2}
+}
+
+% table of contents will contain also subsections
+\setcounter{tocdepth}{2}
+
+% change Bibliography into References
+\AtBeginDocument{\renewcommand{\bibname}{References}}
+
+% set input and output for algorithm2e
+\SetKwInput{KwInput}{Input}                
+\SetKwInput{KwOutput}{Output} 
+
+\begin{document}
+% -----  title page
+\begin{frontespizio}
+	\Universita {Verona}
+	\Dipartimento {Informatica}
+	\Scuola {Ph.D. in Computer Science}
+	\Annoaccademico {2020--2021}
+	\Titoletto {First Year Report}
+	\Titolo {Predicting genetic variants effect on genomic Regulatory Elements}
+	\Candidato [VR456869]{Manuel Tognon}
+	\NCandidato {Student}
+	\NRelatore {Supervisor}{}
+	\Relatore {Prof. Rosalba Giugno}
+	\NCorrelatore {Cosupervisor}{}
+	\Correlatore{Prof. Luca Pinello}
+\end{frontespizio}
+% ------  table of contents, index of figures and tables
+\tableofcontents
+\listoffigures
+\listoftables
+% ------ Introduction
+\mychapter{1}{Introduction}
+Transcription Factors (TFs) are fundamental regulatory proteins playing a key role in regulating the transcriptional state, differentiation and developmental patterns of cells \citep{lambert2018human,reimold2001plasma,whyte2013master}. By binding short DNA sequences (7-20 nucleotides \citep{stewart2012transcription}) called transcription factor binding sites (TFBS) they finely regulate gene expression in a cell-specific manner. TFBS are located within gene promoters \citep{whitfield2012functional} or in distal regulatory elements, such as enhancers or silencers \citep{gotea2010homotypic,lemon2000orchestrated,nolis2009transcription}. TFs bind DNA in a sequence specific manner, recognizing similar but not identical sequences differing in few nucleotides. Often TFBS of a given TF show recurring patterns, which are referred to as \textit{motifs}. TFBS discovery or \textit{motif discovery} is one of the most studied and challenging problems in genomics and computational genomics \citep{pavesi2004silico,d2006does,zambelli2013motif}. TFBS motif discovery can be defined as the problem of finding short similar nucleotide patterns, shared by all or large fractions of sequences bound by the same TF, building the motif. TF motifs can be described and predicted by several models, such as Position Weight Matrices (PWMs) \citep{stormo2000dna}, Markov models (MMs) \citep{durbin1998biological}, or Deep Neural Networks (DNNs) \citep{talukder2021interpretation}. During the last two decades, have been introduced several experimental methods to identify and characterize TFBS \textit{in vitro} and \textit{in vivo} \citep{jolma2011methods}, such as protein binding microarray (PBM) \citep{berger2006compact,berger2009universal}, HT-SELEX \citep{jolma2010multiplexed}, ChIP on Chip \citep{pillai2015chip,collas2008chop}, or ChIP-seq \citep{johnson2007genome,mardis2007chip}. These methods provide two major advantages: (i) they do not require any prior knowledge on binding site sequence, and (ii) they produce huge datasets of thousands of sequences bound by the studied TF. However, the actual binding sites remain to be computationally discovered. Several studies showed that genetic variants can significantly impact TF-DNA binding affinity \citep{de2006regulatory,weinhold2014genome,guo2018mutation}. Genome-wide association studies (GWASs) uncovered thousands of genetic variants (SNPs) associated with complex human traits. The majority of identified SNPs are in non coding regions, often corresponding to functional regulatory elements, such as enhancers \citep{maurano2012systematic}. This suggests that gene misregulation may be mediated by SNPs modulating TF-DNA binding interactions. In fact, these variants may perturb TF-DNA binding specificity, ultimately changing downstream gene expression \citep{deplancke2016genetics}. Importantly, mutations altering TFBS can occur in haplotypes conserved within a population of individuals \citep{kasowski2010variation}, producing population specific TFBS motifs. Similarly, cell-type specific genetic variation can produce different motifs for the same TF. Therefore, developing new computational methods enabling haplotype- and variant-aware motif discovery is fundamental to describe genetic variation impact on TFBS at population level. Moreover, it is important that such models are easily interpretable by humans.
+
+
+% ------  begin bibliography
+\bibliography{biblio}
+\bibliographystyle{natbib}
+
+
+
+
+
+\end{document}
