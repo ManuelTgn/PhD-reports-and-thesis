@@ -392,6 +392,10 @@ Over the past decade, significant strides have been made in the development of m
 \grafimo offers an intuitive command-line interface for constructing genome graphs from user data, when needed. Given a reference genome (FASTA format) and a set of genomic variants (VCF format), \grafimo seamlessly interfaces with the \emph{vg} toolkit to build the genome graphs (\texttt{VG} format) and its indexes (\texttt{XG} \citep{garrison2018variation} and \texttt{GBWT} \citep{siren2020haplotype, novak2017graph} formats). The two indexes are required to perform efficient graph traversal and track the haplotypes embedded in the data structure. To minimize the footprint of the genome graph files, \grafimo construct a graph per chromosome. Moreover, this graph construction design speeds-up the TFBS motif search by allowing to scan different chromosomes in parallel. Alternatively, for systems with limited RAM, the search can be conducted one chromosome at a time, providing flexibility in resource usage.
 
 % ---- Transcription factor binding site motif search
+%
+%  ***** Comment:
+% MT: should I describe the exact procedures to compute the PSSM and the statistical significance?
+%
 \subsubsection{Transcription factor binding site motif search}
 The TFBS motif search in \grafimo requires a set of genomes embedded in a genome graph (\texttt{XG} format), a database of known TF motif PWMs, and a set of genomic regions (BED format). \grafimo reports all the potential TFBS motif occurrences found in the input regions and their associated statistical significance (\textbf{Fig.\ref{fig:grafimo1}}). To identify potential TFBS, \grafimo employs a sliding window approach with a window length of $k$, where $k$ is the query motif width. The window traverses the paths in the graphs that correspond to the genome sequences encoded in it (\textbf{Fig.\ref{fig:grafimo1}(B)}). This process is accomplished by an extension to the \texttt{vg find} functionality, using the graph's \texttt{GBWT} index to explore the $k$-mer space, while considering the embedded haplotypes \citep{siren2020haplotype}. By default, \grafimo focuses its search on paths corresponding to observed haplotypes, but it also provides an option to consider all possible recombinants, even if absent in any embedded sample. The significance (log-likelihood) of each TFBS candidate is determined by evaluating the nucleotide preferences encoded in the motif PWM, akin to FIMO \citep{grant2011fimo}. Specifically, the PWM undergoes processing into a Position Specific Scoring Matrix (PSSM) (\textbf{Fig.\ref{fig:grafimo1}(A)}). The resulting PSSM log-likelihood values are scaled within the range $[0, 1000]$. The scaling allows efficient statistical significance ($P$-value) computations via dynamic programming \citep{grant2011fimo}. Subsequently $P$-values undergo conversion to $q$-values through the Benjamini-Hochberg procedure to correct for multiple hypothesis testing. In this procedure, all $P$-values correspond to all the $k$-mer-paths extracted within the scanned graph's regions. Additionally, \grafimo provides insights into the number of haplotypes in which a significant motif is observed, along with its presence in the reference genome and/or alternative genomes (\textbf{Fig.\ref{fig:grafimo1}(B)}). 
 
@@ -405,13 +409,66 @@ The TFBS motif search in \grafimo requires a set of genomes embedded in a genome
 
 % ---- Report generation
 \subsubsection{Report generation}
-\grafimo interface has been designed with inspiration drawn from FIMO, allowing seamless integration into pipelines and workflows originally built on FIMO. Similar to FIMO, \grafimo generates three distinct reports: a tab-delimited file (TSV), an HTML report, and a GFF3 file compatible with the UCSC Genome Browser \citep{lee2020ucsc}. The TSV report 
+\grafimo interface has been designed with inspiration drawn from FIMO, allowing seamless integration into pipelines and workflows originally built on FIMO. Similar to FIMO, \grafimo generates three distinct reports: a tab-delimited file (TSV), an HTML report, and a GFF3 file compatible with the UCSC Genome Browser \citep{lee2020ucsc}. The TSV report (\textbf{Fig.\ref{fig:grafimo-tsv}}) lists each found candidate TFBS along with its score, genomic location (start, stop, and strand), and statistical significance ($P$-value and $q$-value). Moreover, it reports the number of haplotypes in which each motif candidate has been observed, with a flag value highlighting whether the occurrence was found only on alternative haplotypes or also in the reference sequence. \grafimo also provides an HTML version of the TSV report (\textbf{Fig.\ref{fig:grafimo-html}}), that can be easily explored with any web browser. The GFF3 report is compatible with the UCSC Genome Browser, allowing users to load it as a custom track (\textbf{Fig.\ref{fig:grafimo-genome-browser}}). This enables the visualization and exploration of the identified TFBS candidates alongside additional annotations available in the Genome Browser, such as nearby genes, enhancers, promoters, or pathogenic variants sourced from the ClinVar database \citep{landrum2020clinvar}.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-tsv-report.png}
+    \caption[\grafimo TSV summary report]{The tab-delimited report shows the first 25 potential CTCF occurrences retrieved by \grafimo, searching CTCF motif in ChIP-seq peak regions on A549 cell line (ENCODE experiment ENCFF816XLT).}
+    \label{fig:grafimo-tsv}
+\end{figure}
 
-so it can be used as in-drop replacement for tools built on top of FIMO. As in FIMO, the results are available in three files: a tab-delimited file (TSV), a HTML report and a GFF3 file compatible with the UCSC Genome Browser \citep{lee2020ucsc}. The TSV report contains for each candidate TFBS its score, genomic location (start, stop and strand), $P$-value, $q$-value, the number of haplotypes in which it is observed and a flag value to assess if it belongs to the reference or to the other genomes in VG. The HTML version of the TSV report can be viewed with any web browser. The GFF3 file  can be loaded on the UCSC genome browser as a custom track, to visualize and explore the recovered TFBS with other annotations such as nearby genes, enhancers, promoters, or pathogenic variants from the ClinVar database \citep{landrum2020clinvar}.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-html.png}
+    \caption[\grafimo HTML summary report]{The HTML report displays the first 25 potential CTCF occurrences retrieved by searching CTCF motif occurrences with \grafimo on ChIP-seq regions on A549 cell line (ENCODE experiment ENCFF816XLT).}
+    \label{fig:grafimo-html}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-genome-browser.png}
+    \caption[GFF3 track returned by \grafimo and loaded on the UCSC Genome Browser \citep{lee2020ucsc}]{\grafimo produces a GFF3 report which can be loaded on the UCSC Genome Browser. The custom track loaded in the example shows three potential CTCF occurrences (region chr8:142,782,661-142,782,680) recovered by \grafimo, which overlap a dbSNP annotated variant (rs892844).}
+    \label{fig:grafimo-genome-browser}
+\end{figure}
+
 % -- Searching motif occurrences with GRAFIMO
 \subsection{Searching motif occurrences with \grafimo}
-\grafimo can be used to study how genetic variants may affect the binding affinity of potential TFBS within a set of individuals and may recover additional sites that are missed when considering only linear reference genomes without information about variants. To showcase its utility, we first constructed a VG based on 2548 individuals from the 1000GP phase 3 (hg38 human genome assembly) encoding their genomic variants and phased haplotypes. We then searched this VG for putative TFBS for three TF motifs with different lengths (from 11 to 19 bp), evolutionary conservation, and information content from the JASPAR database \citep{fornes2020jaspar}: CTCF (JASPAR ID MA0139.1), ATF3 (JASPAR ID MA0605.2) and GATA1 (JASPAR ID MA0035.4).  To study regions with likely true binding events, for each factor we selected regions corresponding to peaks (top 3000 sorted by q-value) obtained by ChIP-seq experiments in 6 different cell types (A549, GM12878, H1, HepG2, K562, MCF-7) from the ENCODE project \citep{encode2012integrated}. We used \grafimo to scan these regions and selected for our downstream analyses only sites with a P-value < 1e-4 and considered them as potential TFBS for these factors. Based on the recovered sites, we consistently observed across the 3 studied TFs that genetic variants can significantly affect estimated binding affinity. In fact, we found that thousands of CTCF motif occurrences are found only in non-reference haplotypes, suggesting that a considerable number of TFBS candidates are lost when scanning for TFBS the genome without accounting for genetic variants (\textbf{Fig.\ref{fig:grafimo2}(A)}). Similar results were obtained searching for ATF3 and GATA1. 
+\grafimo's main aim is to investigate the potential impact of genetic variants on the binding affinity of putative TFBS across a set of individuals. By leveraging genome graphs, \grafimo may recover additional sites that might be missed when considering linear reference genomes exclusively, without accounting for genetic variants. To showcase its utility, we constructed a genome graph based on 2,548 individuals from 1KGP phase 3 (hg38 human genome assembly) \citep{zheng2017alignment, lowy2019variant}. The resulting graph encoded their genetic variants (\sim 78 millions, SNPs and indels) and phased haplotypes (total of 5,096 haplotypes). Subsequently, we searched the graph for putative TFBS of three TF motifs retrieved from the JASPAR database \citep{sandelin2004jaspar, fornes2020jaspar}: CTCF (JASPAR ID MA0139.1), ATF3 (JASPAR ID MA0605.2), and GATA1 (JASPAR ID MA0035.4). The three motifs exhibit diversity in length (from 11 to 19 bp), information content, and evolutionary conservation.
+
+\begin{table}
+    \centering
+    \begin{tabular}{|p{4cm}|p{6cm}|}
+        \hline
+        \textbf{Chromosome} & \textbf{Number of genetic variants} \\
+        \hline
+        Chr1 & 6,191,833\\
+        \hline
+        Chr2 & 6,790,551\\
+        \hline
+        Chr3 & 5,641,493\\
+        \hline
+        Chr4 & 5,477,810\\
+        \hline
+        Chr5 & 5,115,036\\
+        \hline
+        Chr6 & 4,863,337\\
+        \hline
+        Chr7 & 4,511,408\\
+        \hline
+        Chr8 & 4,425,449\\
+        \hline
+        Chr9 & 3,384,360\\
+        \hline
+        Chr10 & 3,874,259\\
+        \hline
+        
+    \end{tabular}
+\end{table}
+
+
+
+We then searched this VG for putative TFBS for three TF motifs with different lengths (from 11 to 19 bp), evolutionary conservation, and information content from the JASPAR database \citep{fornes2020jaspar}: CTCF (JASPAR ID MA0139.1), ATF3 (JASPAR ID MA0605.2) and GATA1 (JASPAR ID MA0035.4).  To study regions with likely true binding events, for each factor we selected regions corresponding to peaks (top 3000 sorted by q-value) obtained by ChIP-seq experiments in 6 different cell types (A549, GM12878, H1, HepG2, K562, MCF-7) from the ENCODE project \citep{encode2012integrated}. We used \grafimo to scan these regions and selected for our downstream analyses only sites with a P-value < 1e-4 and considered them as potential TFBS for these factors. Based on the recovered sites, we consistently observed across the 3 studied TFs that genetic variants can significantly affect estimated binding affinity. In fact, we found that thousands of CTCF motif occurrences are found only in non-reference haplotypes, suggesting that a considerable number of TFBS candidates are lost when scanning for TFBS the genome without accounting for genetic variants (\textbf{Fig.\ref{fig:grafimo2}(A)}). Similar results were obtained searching for ATF3 and GATA1. 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{figures/grafimo2.jpg}
