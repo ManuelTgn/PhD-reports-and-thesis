@@ -14,6 +14,7 @@
 \usepackage{longtable}
 \usepackage{amssymb}
 \usepackage[mathscr]{euscript}
+\usepackage{changepage}
 
 % force page number on page bottom part
 \usepackage{fancyhdr} 
@@ -372,6 +373,7 @@ In the next future we plan to construct the \motifgraph using the sequences prio
 \mychapter{5}{Predicting genetic variants impact on transcription factor binding sites}
 Many have highlighted the significant influence of genetic variations on TF-DNA binding events \citep{de2006regulatory, weinhold2014genome, guo2018mutation}. Genome-wide association studies (GWASs) have revealed thousands of genetic variants, known as single nucleotide polymorphisms (SNPs), that are associated with complex human traits. Notably, these SNPs are typically situated within noncoding regions of the genome, many of which function as regulatory elements such as enhancers \citep{maurano2012systematic} Consequently, SNPs have the potential to influence gene expression by modulating TF-DNA interactions. These genetic variants can disrupt TF-DNA binding sequences, potentially leading to alterations in downstream gene expression patterns \citep{deplancke2016genetics}. Crucially, mutations that affect transcription factor binding sites (TFBS) can persist within specific haplotypes found in populations \citep{kasowski2010variation},, contributing to the emergence of population-specific TFBS. Similarly, genetic variability between cell types can give rise to cell-type-specific TF target sequences. Therefore, it becomes imperative to develop software tools capable of predicting the potential impact of genetic variations on TFBS specificity, while also considering haplotype and cell-type-specific mutations.  In pursuit of this goal, we have introduced two tools designed for predicting the effects of mutations on TFBS within haplotypes and across different cell types. \grafimo \citep{tognon2021grafimo} is a variant- and haplotype-aware motif scanning tool searching potential occurrences of known TF motifs on genome graphs \citep{paten2017genome}. Briefly, genome graphs are graph-based data structures, where nodes correspond to DNA sequences and edges describe allowed links between successive sequences. Paths through the graph, which may be labelled (such as in the case of a reference genome), correspond to haplotypes belonging to different genomes \citep{siren2020haplotype} (\textbf{Fig.\ref{fig:vg}}). \motifraptor \citep{yao2021motif} investigates the imapct of genetic variants on TFBS interpolating different omics data, such as cell type-specific transcriptomic data and chromatin accessibility. In particular, \motifraptor is designed to support researchers while annotating variants located within non-coding regions, and provides a potential functional annotation for these mutations. In our research we extend the current \motifraptor to employ SVM-based motif models (\textbf{section 2.1.2}), which often provide better predictions on variants impact than PWM models \citep{tognon2023survey}.
 
+% - figure: Genome Graphs data structure visualization
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{figures/vg.jpg}
@@ -403,7 +405,7 @@ The TFBS motif search in \grafimo requires a set of genomes embedded in a genome
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{figures/grafimo1.png}
-	\caption[GRAFIMO TF motif search workflow.]{\textbf{\grafimo TF motif search workflow. (A)} The motif PWM (in MEME or JASPAR format) is processed and its values are scaled in the range [0, 1000]. The resulting score matrix is used to assign a score and a corresponding P-value to each motif occurrence candidate. In the final report \grafimo returns the corresponding log-odds scores, which are retrieved from the scaled values. \textbf{(B)} \grafimo slides a window of length k, where k is the motif width, along the haplotypes (paths in the graph) of the genomes used to build the VG. The resulting sequences are scored using the motif scoring matrix and are statistically tested assigning them the corresponding P-value and q-value. Moreover, for each entry is assigned a flag value stating if it belongs to the reference genome sequence ("ref") or contains genomic variants ("non.ref") and is computed the number of haplotypes in which the sequence appears.}
+	\caption[\grafimo TF motif search workflow.]{\textbf{\grafimo TF motif search workflow. (A)} The motif PWM (in MEME or JASPAR format) is processed and its values are scaled in the range [0, 1000]. The resulting score matrix is used to assign a score and a corresponding P-value to each motif occurrence candidate. In the final report \grafimo returns the corresponding log-odds scores, which are retrieved from the scaled values. \textbf{(B)} \grafimo slides a window of length k, where k is the motif width, along the haplotypes (paths in the graph) of the genomes used to build the VG. The resulting sequences are scored using the motif scoring matrix and are statistically tested assigning them the corresponding P-value and q-value. Moreover, for each entry is assigned a flag value stating if it belongs to the reference genome sequence ("ref") or contains genomic variants ("non.ref") and is computed the number of haplotypes in which the sequence appears.}
 	\label{fig:grafimo1}
 \end{figure} 
 
@@ -411,31 +413,36 @@ The TFBS motif search in \grafimo requires a set of genomes embedded in a genome
 \subsubsection{Report generation}
 \grafimo interface has been designed with inspiration drawn from FIMO, allowing seamless integration into pipelines and workflows originally built on FIMO. Similar to FIMO, \grafimo generates three distinct reports: a tab-delimited file (TSV), an HTML report, and a GFF3 file compatible with the UCSC Genome Browser \citep{lee2020ucsc}. The TSV report (\textbf{Fig.\ref{fig:grafimo-tsv}}) lists each found candidate TFBS along with its score, genomic location (start, stop, and strand), and statistical significance ($P$-value and $q$-value). Moreover, it reports the number of haplotypes in which each motif candidate has been observed, with a flag value highlighting whether the occurrence was found only on alternative haplotypes or also in the reference sequence. \grafimo also provides an HTML version of the TSV report (\textbf{Fig.\ref{fig:grafimo-html}}), that can be easily explored with any web browser. The GFF3 report is compatible with the UCSC Genome Browser, allowing users to load it as a custom track (\textbf{Fig.\ref{fig:grafimo-genome-browser}}). This enables the visualization and exploration of the identified TFBS candidates alongside additional annotations available in the Genome Browser, such as nearby genes, enhancers, promoters, or pathogenic variants sourced from the ClinVar database \citep{landrum2020clinvar}.
 
+% - figure: GRAFIMO TSV summary report
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/grafimo-tsv-report.png}
-    \caption[\grafimo TSV summary report]{The tab-delimited report shows the first 25 potential CTCF occurrences retrieved by \grafimo, searching CTCF motif in ChIP-seq peak regions on A549 cell line (ENCODE experiment ENCFF816XLT).}
+    \caption[\grafimo TSV summary report]{\textbf{\grafimo TSV summary report.} The tab-delimited report shows the first 25 potential CTCF occurrences retrieved by \grafimo, searching CTCF motif in ChIP-seq peak regions on A549 cell line (ENCODE experiment ENCFF816XLT).}
     \label{fig:grafimo-tsv}
 \end{figure}
 
+% - figure: GRAFIMO HTML summary report
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/grafimo-html.png}
-    \caption[\grafimo HTML summary report]{The HTML report displays the first 25 potential CTCF occurrences retrieved by searching CTCF motif occurrences with \grafimo on ChIP-seq regions on A549 cell line (ENCODE experiment ENCFF816XLT).}
+    \caption[\grafimo HTML summary report]{\textbf{\grafimo HTML summary report.} The HTML report displays the first 25 potential CTCF occurrences retrieved by searching CTCF motif occurrences with \grafimo on ChIP-seq regions on A549 cell line (ENCODE experiment ENCFF816XLT).}
     \label{fig:grafimo-html}
 \end{figure}
 
+% - figure: GFF3 track returned by GRAFIMO and loaded on the UCSC Genome Browser 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/grafimo-genome-browser.png}
-    \caption[GFF3 track returned by \grafimo and loaded on the UCSC Genome Browser \citep{lee2020ucsc}]{\grafimo produces a GFF3 report which can be loaded on the UCSC Genome Browser. The custom track loaded in the example shows three potential CTCF occurrences (region chr8:142,782,661-142,782,680) recovered by \grafimo, which overlap a dbSNP annotated variant (rs892844).}
+    \caption[GFF3 track returned by \grafimo and loaded on the UCSC Genome Browser]{\textbf{GFF3 track returned by GRAFIMO and loaded on the UCSC Genome Browser.} \grafimo produces a GFF3 report which can be loaded on the UCSC Genome Browser. The custom track loaded in the example shows three potential CTCF occurrences (region chr8:142,782,661-142,782,680) recovered by \grafimo, which overlap a dbSNP annotated variant (rs892844).}
     \label{fig:grafimo-genome-browser}
 \end{figure}
 
 % -- Searching motif occurrences with GRAFIMO
 \subsection{Searching motif occurrences with \grafimo}
-\grafimo's main aim is to investigate the potential impact of genetic variants on the binding affinity of putative TFBS across a set of individuals. By leveraging genome graphs, \grafimo may recover additional sites that might be missed when considering linear reference genomes exclusively, without accounting for genetic variants. To showcase its utility, we constructed a genome graph based on 2,548 individuals from 1KGP phase 3 (hg38 human genome assembly) \citep{zheng2017alignment, lowy2019variant}. The resulting graph encoded their genetic variants (\sim 78 millions, SNPs and indels) and phased haplotypes (total of 5,096 haplotypes). Subsequently, we searched the graph for putative TFBS of three TF motifs retrieved from the JASPAR database \citep{sandelin2004jaspar, fornes2020jaspar}: CTCF (JASPAR ID MA0139.1), ATF3 (JASPAR ID MA0605.2), and GATA1 (JASPAR ID MA0035.4). The three motifs exhibit diversity in length (from 11 to 19 bp), information content, and evolutionary conservation.
+\grafimo's main aim is to investigate the potential impact of genetic variants on the binding affinity of putative TFBS across a set of individuals. By leveraging genome graphs, \grafimo may recover additional sites that might be missed when considering linear reference genomes exclusively, without accounting for genetic variants. To showcase its utility, we constructed a genome graph based on 2,548 individuals from 1KGP phase 3 (hg38 human genome assembly) \citep{zheng2017alignment, lowy2019variant}. The resulting graph encoded their genetic variants ($\sim$78 millions, SNPs and indels (\textbf{Table 
+\ref{table-1KGP-variants}})) and phased haplotypes (total of 5,096 haplotypes). Subsequently, we searched the graph for putative TFBS of three TF motifs retrieved from the JASPAR database \citep{sandelin2004jaspar, fornes2020jaspar}: CTCF (JASPAR ID MA0139.1), ATF3 (JASPAR ID MA0605.2), and GATA1 (JASPAR ID MA0035.4) (\textbf{Fig.\ref{fig:grafimo-motifs}}). The three motifs exhibit diversity in length (from 11 to 19 bp), information content, and evolutionary conservation. To investigate regions with likely true binding events, we focused our analysis on ChIP-seq peak regions in six different cell lines (A549, GM12878, H1, HepG2, K562, MCF-7) retrieved from the ENCODE Project database \citep{encode2012integrated, davis2018encyclopedia} (\textbf{Table \ref{tab:table-encode-experiment}}). For each TF, we systematically acquired the optimal IDR thresholded peaks from ENCODE (bigBED format). Subsequently, we employed UCSC's \texttt{bigBedToBed} tool \citep{kent2010bigwig} to convert each bigBED file into its corresponding BED. To enhance data quality, we filtered the resulting BED files, excluding features mapped to non-canonical chromosomes. The filtered BEDs were then subjected to sorting based on both $q$-values and peak signals. This sorting allowed us to prioritize the identification of the most informative regions, specifically selecting the top 3,000 peaks for each experiment. Then, we performed a comprehensive scan on the prioritized regions using \grafimo. In our subsequent downstream analyses, we retained those sites that exhibited a $P$-value $< 1e^{-4}$. This stringent threshold ensured a focus on statistically significant potential motif occurrences. Finally, we considered the sites meeting these criteria as potential binding sites for the respective TFs under investigation. Based on the retrieved sites, we consistently observed across the three investigated TFs that genetic variants can significantly affect the estimated binding affinity. 
 
+% - table: Genetic variants in the 1KGP genome graphs
 \begin{table}
     \centering
     \begin{tabular}{|p{4cm}|p{6cm}|}
@@ -462,33 +469,136 @@ The TFBS motif search in \grafimo requires a set of genomes embedded in a genome
         \hline
         Chr10 & 3,874,259\\
         \hline
-        
+        Chr11 & 3,881,791\\
+        \hline
+        Chr12 & 3,745,465\\
+        \hline
+        Chr13 & 2,760,845\\
+        \hline
+        Chr14 & 2,548,903\\
+        \hline
+        Chr15 & 2,301,453\\
+        \hline
+        Chr16 & 2,548,920\\
+        \hline
+        Chr17 & 2,209,149\\
+        \hline
+        Chr18 & 2,189,529\\
+        \hline
+        Chr19 & 1,738,824\\
+        \hline
+        Chr20 & 1,817,492\\
+        \hline
+        Chr21 & 1,045,269\\
+        \hline
+        Chr22 & 1,059,079\\
+        \hline
+        ChrX & 106,963\\
+        \hline
     \end{tabular}
+    \caption[Genetic variants in the 1KGP genome graphs]{\textbf{Genetic variants in the 1KGP genome graphs.} Number of genetic variants (SNPs and indels) in the genome graph constructed using 1KGP phase 3 on hg38 data. The variants belong to 2,548 individuals from 26 populations. In total the genome graphs encoded $\sim$78 millions variants.}
+    \label{table-1KGP-variants}
 \end{table}
 
+% - figure: Transcription factor motifs used to test GRAFIMO
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-motifs.png}
+    \caption[Transcription factor motifs used to test \grafimo]{\textbf{Transcription factor motifs used to test \grafimo.} Transcription factor binding site motifs of \textbf{(A)} CTCF, \textbf{(B)} ATF3, and \textbf{(C)} GATA1.}
+    \label{fig:grafimo-motifs}
+\end{figure}
+
+% table: ENCODE ChIP-seq experiment codes
+\begin{table}
+    \begin{adjustwidth}{-.5in}{-.5in}
+        \begin{center}
+            \begin{tabular}{|p{1.1cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+                \hline
+                \textbf{Motif} & \textbf{A549} & \textbf{GM12878} & \textbf{H1} & \textbf{HepG2} & \textbf{K562} & \textbf{MCF-7}\\
+                \hline
+                 CTCF & ENCFF816XLT & ENCFF267NYF & & ENCFF015OJG & ENCFF895HAG & ENCFF088JWU\\
+                 \hline
+                 ATF3 & & & ENCFF207AVV & ENCFF753WNT & ENCFF787GVU & \\
+                 \hline
+                 GATA1 & & & & & ENCFF811YFQ & \\
+                 & & & & & ENCFF939ODZ & \\
+                 \hline
+            \end{tabular}
+            \caption[ENCODE ChIP-seq experiments]{\textbf{ENCODE ChIP-seq experiments.} To test our software we searched potential occurrences of three transcription factor motifs (CTCF, ATF3, and GATA1) in a hg38 genome graph enriched with genetic variants and haplotypes of 2,548 individuals from 1000 Genomes Project phase 3.}
+            \label{tab:table-encode-experiment}
+        \end{center}
+    \end{adjustwidth}
+\end{table}
+
+% ---- Searching for CTCF occurrences
+\subsubsection{Searching for CTCF occurrences}
+CTCF is a zinc-finger transcription factor involved in transcriptional regulation, playing a pivotal role in epigenetic control \citep{ishihara2006ctcf}, and functioning as a tumor suppressor \citep{fiorentino2012tumor}. In our experiments, we performed a targeted search for CTCF motif (JASPAR ID MA0139.1) (\textbf{Fig.\ref{fig:grafimo-motifs} (A)}) occurrences within the 1KGP genome graph. Interestingly, we found a substantial number of CTCF motif occurrences exclusive to non-reference haplotypes, indicating that a significant pool of potential TFBS is overlooked when scanning the genome without considering genetic variants (\textbf{Fig.\ref{fig:grafimo-ctcf} (A)}). Furthermore, our analysis identified several highly significant CTCF occurrences within rare haplotypes (\textbf{Fig.\ref{fig:grafimo-ctcf} (B)}), that may influence gene expression in individuals showing these haplotypes. We investigated the genomic locations of significant motif occurrences to assess how individual binding sites might be affected by genetic diversity--whether disrupted, created, or modulated. Interestingly, our experiments revealed that 6.13\% of potential CTCF binding sites were exclusive to non-reference haplotypes, 5.94\% were disrupted by variants in non-reference haplotypes, and approximately 30\% retained significance in non-reference haplotypes, but with different binding scores (\textbf{Fig.\ref{fig:grafimo-ctcf} (C)}). Notably, a considerable portion of putative binding sites recovered solely on individual haplotypes exhibited population specificity. For instance, 24.66\%, 6.74\%, 5.68\%, 13.01\%, and 12.52\% of potential CTCF binding sites retrieved exclusively from individual haplotypes were specific to AFR, EUR, AMR, SAS, and EAS populations, respectively (\textbf{Fig.\ref{fig:grafimo-ctcf} (D)}). Among the unique motif occurrences identified exclusively in non-reference haplotypes in CTCF ChIP-seq peaks, we uncovered a TFBS (chr19:506,910-506,929) that illustrates the pitfalls of relying solely on reference genomes for motif scanning. In this genomic locus, we identified a heterozygous SNP aligning with position 10 of the CTCF matrix, that significantly modulates the binding affinity of the corresponding binding site. By inspecting ChIP-seq reads (experiment ENCSR000DZN on GM12878), an allelic imbalance emerged towards the alternative allele. The alternative allele G exhibited a clear prevalence (70.59\% of reads), while the reference allele A lagged behind at 29.41\% of reads. This allelic imbalance is not observed in the control reads (experiment ENCSR000EYX) (\textbf{Fig.\ref{fig:grafimo-allelic-imbalance}}).
+
+% - figure: Searching CTCF motif on genome graphs using GRAFIMO provides insights on the impact of genetic diversity on putative binding sites
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo2.jpg}
+    \caption[Searching CTCF motif on genome graphs using \grafimo provides insights on the impact of genetic diversity on putative binding sites]{\textbf{Searching CTCF motif on genome graphs using \grafimo provides insights on the impact of genetic diversity on putative binding sites. (A)} Statistically significant ($P$-value $< 1e^{-4}$) and non-significant potential CTCF occurrences found in the reference and haplotype sequences found using \grafimo on 1KGP genome graph. \textbf{(B)} Statistical significance of the identified CTCF occurrences and their frequency within the haplotypes embedded in the genome graph. \textbf{(C)} Percentage of statistically significant potential CTCF binding sites found only in the reference genome, only in alternative haplotypes, and with their binding scores modulated by 1KGP genetic variants. \textbf{(D)} Percentage of population-specific and common (shared by two or more populations) CTCF binding sites found in individual haplotypes.}
+    \label{fig:grafimo-ctcf}
+\end{figure}
+
+% - figure: Considering genomic diversity, GRAFIMO captures additional binding events
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo3.jpg}
+    \caption[Considering genomic diversity, \grafimo captures additional binding events]{\textbf{Considering genomic diversity, \grafimo captures additional binding events.} \grafimo reports a potential CTCF binding site at chr19:506,910-506,929 exclusively present in haplotype sequences. The binding site was identified by scanning CTCF ChIP-seq peaks (experiment ENCSR000DZN on GM12878). The analysis of ChIP-seq reads (ENCFF162QXM) unveils an allelic imbalance at position 10 of the motif, towards the alternative allele (G). \grafimo accurately captures this imbalance by reporting sequences carrying a G at position 10 (as found in the alternative haplotypes), while the potential TFBS on the reference, which carries an A, is not reported as statistically significant. This discrepancy aligns with CTCF motif logo, which illustrates G as the dominant nucleotide at position 10.}
+    \label{fig:grafimo-allelic-imbalance}
+\end{figure}
+
+% ---- Searching for ATF3 occurrences
+\subsubsection{Searching for ATF3 occurrences}
+Activating Transcription Factor 3 (ATF3) is a member of the cAMP responsive element-binding family, exhibits increased activity in response to physiological stress across diverse tissues \citep{chen1996analysis}. Moreover, ATF3 has versatile roles in immunity and cancer \citep{thompson2009atf3}. ATF3 binds to short conserved DNA sequences. In our investigations, we searched ATF3 motif (JASPAR ID MA0605.2) (\textbf{Fig.\ref{fig:grafimo-motifs} (B)}) occurrences within the 1KGP genome graph. For subsequent analyses we considered ATF3 occurrences with $P$-value $< 1e^{-4}$ as potential binding sites. Our results unveiled several potential motif occurrences that would be lost scanning only the reference genome sequences (\textbf{Fig.\ref{fig:grafimo-atf3} (A)}). Additionally, we observed that several ATF3 motif occurrences with high statistical significance were identified in alternative haplotypes (\textbf{Fig.\ref{fig:grafimo-atf3} (B)}). Furthermore, we observed that 7.03\% of potential ATF3 binding sites are exclusively identified in non-reference haplotype sequences, 11.28\% are disrupted by genomic variants, and approximately 13\% of ATF3 TFBS maintain significance in non-reference haplotypes but exhibit different binding scores (\textbf{Fig.\ref{fig:grafimo-atf3} (C)}). Importantly, a substantial fraction of putative ATF3 binding sites displayed population specificity: 19.81\%, 3.77\%, 7.55\%, 19.81\%, and 19.81\% of potential binding sites retrieved in individual haplotypes were specific to AFR, EUR, AMR, SAS, EAS populations, respectively (\textbf{Fig.\ref{fig:grafimo-atf3} (D)}). 
+
+% - figure: Searching ATF3 motif on genome graphs using GRAFIMO provides insights on the impact of genetic diversity on putative binding sites
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-atf3.png}
+    \caption[Searching ATF3 motif on genome graphs using \grafimo provides insights on the impact of genetic diversity on putative binding sites]{\textbf{Searching ATF3 motif on genome graphs using \grafimo provides insights on the impact of genetic diversity on putative binding sites. (A)} Statistically significant ($P$-value $< 1e^{-4}$) and non-significant potential ATF3 occurrences found in the reference and haplotype sequences found using \grafimo on 1KGP genome graph. \textbf{(B)} Statistical significance of the identified ATF3 occurrences and their frequency within the haplotypes embedded in the genome graph. \textbf{(C)} Percentage of statistically significant potential ATF3 binding sites found only in the reference genome, only in alternative haplotypes, and with their binding scores modulated by 1KGP genetic variants. \textbf{(D)} Percentage of population-specific and common (shared by two or more populations) ATF3 binding sites found in individual haplotypes.}
+    \label{fig:grafimo-atf3}
+\end{figure}
+
+% ---- Searching for GATA1 occurrences
+\subsubsection{Searching for GATA1 occurrences}
+GATA1 is a zinc-finger transcription factor playing a pivotal role in the development of hematopoietic cell lineages \citep{calligaris1995alternative}. GATA1 binds short (11 bp) highly conserved DNA sequences. In our experiments, we searched GATA1 motif (JASPAR ID MA0035.4) (\textbf{Fig.\ref{fig:grafimo-motifs}}) occurrences within the 1KGP genome graph. In our downstream analyses we considered GATA1 occurrences with $P$-value $< 1e^{-4}$ as potential binding sites. In our experiments we observed that several GATA1 occurrences are lost when not considering genetic diversity while scanning genomic sequences (\textbf{Fig.\ref{fig:grafimo-gata1} (A)}). Moreover, several potential motif occurrences with high statistical significance were found scanning non-reference haplotypes (\textbf{Fig.\ref{fig:grafimo-gata1} (B)}). Further investigations unveiled that 9.78\% of potential GATA1 binding sites are exclusive to non-reference haplotype sequences, 12.58\% are disrupted by genetic variants, and $\sim$4\% maintain significance in non-reference haplotypes but exhibit different binding scores (\textbf{Fig.\ref{fig:grafimo-gata1} (C)}). We also identified population specific GATA1 binding sites among those retrieved only in individual haplotypes, with 25.97\% specific to AFR, 3.90\% to EUR, 9.09\% to AMR, 19.48\% to SAS, and 11.69\% to EAS populations (\textbf{Fig.\ref{fig:grafimo-gata1}(D)}).
+
+% - figure: Searching GATA1 motif on genome graphs using GRAFIMO provides insights on the impact of genetic diversity on putative binding sites
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-gata1.png}
+    \caption[Searching GATA1 motif on genome graphs using \grafimo provides insights on the impact of genetic diversity on putative binding sites]{\textbf{Searching GATA1 motif on genome graphs using \grafimo provides insights on the impact of genetic diversity on putative binding sites. (A)} Statistically significant ($P$-value $< 1e^{-4}$) and non-significant potential GATA1 occurrences found in the reference and haplotype sequences found using \grafimo on 1KGP genome graph. \textbf{(B)} Statistical significance of the identified GATA1 occurrences and their frequency within the haplotypes embedded in the genome graph. \textbf{(C)} Percentage of statistically significant potential GATA1 binding sites found only in the reference genome, only in alternative haplotypes, and with their binding scores modulated by 1KGP genetic variants. \textbf{(D)} Percentage of population-specific and common (shared by two or more populations) GATA1 binding sites found in individual haplotypes.}
+    \label{fig:grafimo-gata1}
+\end{figure}
+
+% -- Comparing GRAFIMO and FIMO
+\subsection{Comparing \grafimo and FIMO}
+To validate \grafimo accuracy, we conducted a comparative analysis with FIMO, running the latter on the same ChIP-seq regions used to test the former. FIMO and \grafimo runs were performed on a Linux-based machine with an Intel(R) Core (TM) i7-5960X 3.00GHz CPU (16 cores) and 64 GB of memory (RAM). Since FIMO scans sets of sequences given as FASTA files, for each investigated TF, we recovered the reference genome sequences representing the ChIP-seq optimal IDR thresholded peaks using BEDTools \citep{quinlan2010bedtools}. For each studied TF, we observed that \grafimo reports all potential motif occurrences identified by FIMO. Therefore, \grafimo successfully identifies additional motif candidates found in individual haplotypes embedded in the genome graph without sacrificing potential motif occurrences in the reference genome sequence. We further benchmarked \grafimo against FIMO in terms of running time and memory usage. Using CTCF motif (19 bp) as an example, we searched for potential motif occurrences on forward and reverse strands in 1000 genomic regions of human chr22 with increasing length (1 to 9 Mb). To run FIMO, for each set of genomic regions we created the corresponding FASTA file. To assess \grafimo performance we scanned chr22 genome graph without encoded variants, on the previously computed set of regions. Since FIMO does not provide a parallel implementation we run \grafimo using a single thread. Although FIMO exhibits superior speed and lower memory requirements in a single-thread scenario (\textbf{Fig.\ref{fig:grafimo-fimo-cmp1} (A)} and \textbf{(B)}), \grafimo surpasses FIMO in speed when scanning regions accounting for genetic variants of 2,548 individuals (\textbf{Fig.\ref{fig:grafimo-fimo-cmp1} (C)}). We excluded from the measurements for FIMO the overhead introduced to compute the FASTA files from the original BED files. These results were expected since FIMO is a highly optimized tool scanning linear reference genomic sequences, while \grafimo efficiency shines while scanning panels of individuals accounting for their genetic diversity. We further evaluated \grafimo performance using 1, 4, 8, and 16 threads to scan the chr22 genome graph embedding the 2,548 individuals and their genetic variants from 1KGP (\textbf{Fig.\ref{fig:grafimo-fimo-cmp2}}). As expected, using multiple threads significantly reduces running time, although memory usage remains consistent with the number of threads. For the analyses presented in the previous section each scan on average took $\sim$15 minutes and consumed around 24 GB of memory. 
+
+% - figure: Comparing GRAFIMO and FIMO performance
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-runningtime.png}
+    \caption[Comparing \grafimo and FIMO performance]{\textbf{Comparing \grafimo and FIMO performance. (A)} FIMO is faster than \grafimo (using 1 thread) when searching CTCF motif (JASPAR ID MA0139.1) on human chr22 regions (total width ranging from 1 to 9 Mb) and without accounting for genetic variants. \textbf{(B)} FIMO uses less memory than \grafimo, however it only scan reference sequences. \textbf{(C)} \grafimo is generally faster than FIMO while searching CTCF occurrences when considering genetic diversity in large panels of individuals (e.g. 1KGP phase 3), even with single thread.}
+    \label{fig:grafimo-fimo-cmp1}
+\end{figure}
+
+% - figure: GRAFIMO running time efficiently scales with the number of threads
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/grafimo-runningtime2.png}
+    \caption[\grafimo running time efficiently scales with the number of threads]{\textbf{\grafimo running time efficiently scales with the number of threads.} By running \grafimo woth multiple threads \textbf{(A)} the running time significantly decreases, while \textbf{(B)} memory usage remains similar.}
+    \label{fig:grafimo-fimo-cmp2}
+\end{figure}
+
+% -- Conclusions
+\subsection{Conclusions}
+By leveraging genome graphs, \grafimo introduces an effective approach for investigating the impact of genetic variation on the binding landscape of transcription factors (TFs) across diverse populations. Notably, our findings revealed the presence of numerous potential and exclusive TF binding sites (TFBS) in individual haplotype sequences. Additionally, genomic variants exert a substantial influence on the binding affinity of several motif occurrence candidates identified in the reference genome sequence. This tool offers a valuable resource for prioritizing regions that could underlie individual-specific alterations in gene expression, a facet often overlooked when relying solely on reference genomes.
 
 
-We then searched this VG for putative TFBS for three TF motifs with different lengths (from 11 to 19 bp), evolutionary conservation, and information content from the JASPAR database \citep{fornes2020jaspar}: CTCF (JASPAR ID MA0139.1), ATF3 (JASPAR ID MA0605.2) and GATA1 (JASPAR ID MA0035.4).  To study regions with likely true binding events, for each factor we selected regions corresponding to peaks (top 3000 sorted by q-value) obtained by ChIP-seq experiments in 6 different cell types (A549, GM12878, H1, HepG2, K562, MCF-7) from the ENCODE project \citep{encode2012integrated}. We used \grafimo to scan these regions and selected for our downstream analyses only sites with a P-value < 1e-4 and considered them as potential TFBS for these factors. Based on the recovered sites, we consistently observed across the 3 studied TFs that genetic variants can significantly affect estimated binding affinity. In fact, we found that thousands of CTCF motif occurrences are found only in non-reference haplotypes, suggesting that a considerable number of TFBS candidates are lost when scanning for TFBS the genome without accounting for genetic variants (\textbf{Fig.\ref{fig:grafimo2}(A)}). Similar results were obtained searching for ATF3 and GATA1. 
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/grafimo2.jpg}
-	\caption[Searching CTCF motif on VG with \grafimo provides an insight on how genetic variation affects putative
-binding sites]{\textbf{Searching CTCF motif on VG with \grafimo provides an insight on how genetic variation affects putative
-binding sites. (A)} Potential CTCF occurrences statistically significant (P-value < 1e-4) and non-significant found in the
-reference and in the haplotype sequences found with \grafimo oh hg38 1000GP VG. (\textbf{B)} Statistical significance of
-retrieved potential CTCF motif occurrences and frequency of the corresponding haplotypes embedded in the VG. \textbf{(C)}
-Percentage of statistically significant CTCF potential binding sites found only in the reference genome or alternative
-haplotypes and with modulated binding scores based on 1000GP genetic variants \textbf{(D)} Percentage of population specific and
-common (shared by two or more populations) potential CTCF binding sites present on individual haplotypes.}
-	\label{fig:grafimo2}
-\end{figure} 
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/grafimo3.jpg}
-	\caption[Considering genomic variation, GRAFIMO captures more potential binding events]{\textbf{Considering genomic variation, GRAFIMO captures more potential binding events.} GRAFIMO reports a potential CTCF binding site at chr19:506,910-506,929 found only in haplotype sequences, searching the motif in ChIP-seq peaks called on cell line GM12878 (experiment code ENCSR000DZN). The reads used to call for ChIP-seq peaks (ENCFF162QXM) show an allelic imbalance at position 10 of the motif sequence towards the alternative allele \texttt{G}, instead of the reference allele \texttt{A}. The imbalance is captured by GRAFIMO which reports the sequence presenting \texttt{G} at position 10 (found in the haplotypes), while the potential TFBS on the reference carrying an \texttt{A} is not reported as statistically significant ($P$-value > 1e-4). CTCF motif logo shows that the \texttt{G} is the dominant nucleotide in position 10.}
-	\label{fig:grafimo3}
-\end{figure} 
-We also found several highly significant CTCF motif occurrences in rare haplotypes that may potentially modulate gene expression in these individuals (\textbf{Fig.\ref{fig:grafimo2}(B)}). Similar behaviours were observed for ATF3 and GATA1. We also investigated the potential effects of the different length and type of mutations i.e. SNPs and indels on the CTCF, ATF3 and GATA1 binding sites. However, we did not observe a clear and general trend. By considering the genomic locations of the significant motif occurrences we next investigated how often individual TFBS may be disrupted, created or modulated. We observed that 6.13\% of the potential CTCF binding sites can be found only on non-reference haplotype sequences, 5.94\% are disrupted by variants in non-reference haplotypes and $\sim$30\% are still significant in non-reference haplotypes but with different binding scores (\textbf{Fig.\ref{fig:grafimo2}(C)}). Similar results were observed for ATF3 and GATA1. Interestingly, we observed that a large fraction of putative binding sites recovered only on individual haplotypes are population specific. For CTCF we found that 24.66\%, 6.74\%, 5.68\%, 13.01\%, 12.52\% of potential CTCF TFBS retrieved on individual haplotype sequences only are specific for AFR, EUR, AMR, SAS and EAS populations, respectively (\textbf{Fig.\ref{fig:grafimo2}(D)}).Among the unique CTCF motif occurrences found only on non-reference haplotypes in CTCF ChIP-seq peaks we uncovered one TFBS (chr19:506,910–506,929) that clearly illustrates the danger of only using reference genomes for motif scanning. Within this region we recovered a heterozygous SNP that overlaps (position 10 of the CTCF matrix) and significantly modulates the binding affinity of this TFBS. In fact, by inspecting the ChIP-seq reads (experiment ENCSR000DZN, GM12878 cell line), we observed a clear allelic imbalance towards the alternative allele G (70.59\% of reads) with respect to the reference allele A (29.41\% of reads). This allelic imbalance is not observed in the reads used as control (experiment code ENCSR000EYX) (\textbf{Fig.\ref{fig:grafimo3}}). Taken together these results highlight the importance of considering non-reference genomes when searching for potential TFBS or to characterize their potential activity in a population of individuals. We also compared the performance of GRAFIMO against FIMO. FIMO is faster and requires less memory, when scanning a single linear genome. However, when considering the 2548 individual genomes and their genetic variation, GRAFIMO proves to be generally faster than FIMO. Moreover, we benchmarked how GRAFIMO running time and memory usage change using an increasing number of threads.  By increasing the number of threads, we observed a dramatical drop in running time, while memory usage remained similar.
 % ---- MotifRaptor2
 \section{\motifraptor2}
 Several studies have reported that genetic variants can enhance or disrupt TF-DNA binding affinity \citep{de2006regulatory, weinhold2014genome, wienert2015editing}. Genome-wide association studies (GWASs) have uncovered thousands of genetic variants (SNPs) associated with complex traits or human disease \citep{buniello2019nhgri}. Despite these efforts, functional studies to prioritize potential causal variants have lagged behind \citep{gallagher2018post}, resulting in a limited interpretation of the underlying pathophysiology mechanisms connecting variant to phenotype. A few missense SNPs can alter the function of a given TF by affecting its coding sequence, protein structure and therefore DNA binding capability, especially for Mendelian disease \citep{barrera2016survey}. For common diseases and complex traits, the great majority ($>$90\%) of associated SNPs are in non-coding regions and mainly in DNase I hypersensitive sites. These SNPs correspond to functionally relevant non-coding regions such as enhancers and promoters \citep{maurano2012systematic}. This observation suggests that chromatin state alterations and gene deregulation may be mediated by SNPs that modulate TF binding activities. In other words, genetic variants in these non-coding regions may perturb TF recognition sequences to enhance or disrupt TF-DNA binding events ultimately changing the downstream gene expression programs \citep{deplancke2016genetics}. Even if single non-coding SNPs may only moderately alter binding sites and are underpowered to explain gene expression programs, statistics on a set of SNPs modulating common TF binding sites could be significant enough to reveal the convergent regulatory mechanism in complex traits. The method we present is based on this key idea.Despite the fact that several approaches have been proposed to explore how TF binding sites could be affected by genetic variants, challenges remain. The next paragraphs provide a short summary and the rationale behind the development of Motif-Raptor. First, current availability of ChIP-seq data unfortunately limit the utility of tools such as MMARGE \citep{link2018mmarge}, GERV \citep{zeng2016gerv}, DeepSEA \citep{zhou2015predicting}, Basset \citep{kelley2016basset}, IMPACT \citep{amariuta2019impact}, RegulomeDB \citep{boyle2012annotation}, HaploReg4 \citep{ward2012haploreg}. In fact, these tools are extremely powerful and practical only when genome-wide maps of TF occupancy and/or chromatin marks in relevant cellular contexts are available. Therefore, in \citep{yao2021motif}, the authors found a unique value proposition in developing a framework to accommodate scenarios in which only PWM models and gene expression data are available. Second, available models based on ChIP-seq or PWM data do not systematically provide a global ranking and the significance of the TFs based on all trait-associated variants, rather a per SNP scoring. In fact, current methods based on PWM and/or DNase I-seq data, such as Combined Annotation Dependent Depletion (CADD, \citep{maurano2015large}), CENTIPEDE \citep{moyerbrailean2016genetics, pique2011accurate}, Affinity Testing for regulatory SNPs (atSNP, \citep{zuo2015atsnp}). do not provide a procedure to formally test the global effect of a set of GWAS variants on the set of overlapping TF binding sites. To solve this limitation, \motifraptor proposed a novel genome-wide statistic to prioritize putative causal TFs based on the entire set of binding sites and overlapping variants rather than single loci. Third, these methods do not consider linkage disequilibrium (LD) for the tagged loci by the GWAS-associated variants. This is important given that several non-causal SNPs have similar association scores as the true causal ones and that this potentially confound the analysis. In fact, these false positives can dilute our power of detecting the true mechanisms behind the causal variants. \motifraptor's approach tries to account for this problem based on the two following strategies. By relying on cell type-specific chromatin accessibility regions, it is already reducing the space of variants in each LD block. To implicitly account for local LD structure, \motifraptor samples the background set of chromatin accessibility regions in close proximity of the regions that are specific for each cell type. With these strategies, \motifraptor mitigates the problem by specifically looking for variants within regions that are cell type specific. Among available tools only SLDP (Signed LD Profile) \citep{reshef2018detecting} overcomes this problem and offers a genome-wide significance score for each TF, based on the directional modulation of TF binding sites by SNPs. Another tool, GREGOR (Genomic Regulatory Elements and Gwas Overlap algoRithm) \citep{schmidt2015gregor}, also explicitly accounts for LD structure to assess the enrichment on sentinel SNPs in arbitrary genomic regions (e.g. to prioritize cell types based on cell type specific annotations). \motifraptor addresses the above limitations of current approaches, by providing a cell type-specific TF-centric analysis with associated statistics, comprehensive reporting and visualization functionalities. This tool can facilitate the discovery and interpretation of the action of non-coding variants on key regulators of complex traits.
