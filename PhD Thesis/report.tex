@@ -102,11 +102,66 @@ During the last decade, omics sciences have swiftly emerged as fundamental tools
 in the complex landscape of cellular regulation, non-coding genetic variants frequently play important roles in the epigenetic machinery that governs the cellular environment \citep{maurano2012systematic}. While interpreting the functional impact of genetic variants mapped within coding regions on the cellular environment is often straightforward and widely explored in the existing literature, non-coding variants functional interpretation presents challenges.  We refer to the genomic regions governing the cellular environment as genomic regulatory elements (GREs). Currently, several computational tools designed to predict the effects of genetic variants within gene sequences are available to the scientific community.  However,  while these tools are valuable in assessing genetic variants impacts at broader level, they often fall short when it comes to accomodating the requirements of precision genomics.  In the evolving landscape of precision medicine, ther is a growing need for computational resources that can seamlessly  integrate individual-oriented aspects into their analyses.  Moreover, since genomics plays an increasingly central role in healthcare decision-making, the development of more individual centric computational tools becomes fundamental. We addressed these challenges by proposing innovative algorithms and computational tools tailored for the analysis of genetic variant impact on GREs and CRISPR genome editing, at broad and individual-specific levels. Our primary focus has been on creating haplotype- and individual-aware methods, aligning with the growing demand for individual-centric genomics applications.  Our research focused on developing novel algorithms designed to discover and find transcription factor binding sites (TFBSs) within DNA sequences, accounting for individual- and cell type-specific genetic variants.  We propose a novel computational model to represent TFBSs called MotifGraphs, which employs graph data structures to efficiently represent genetic diversity between binding sites from different individuals or cell types, without sacrificing interpretability.  To address the effects of genetic variants on TFBSs, we developed two novel algorithms \grafimo \citep{tognon2021grafimo} and \motifraptor \citep{yao2021motif}. \grafimo searches for occurrences of known TFBSs genome graphs \citep{paten2017genome}, while accounting for for individual haplotypes and genetic variants. \motifraptor predicts and annotates genetic variants impact on TFBSs integrating different omics data, such as chromatin accessibility, gene expression and GWAS summary statistics. Additionaly we introduced \crisprme \citep{cancellieri2023human}, a tool designed to CRISPR off-targets and avaluate the potential impact of individual genetic variants on target specificity.  Importantly,  \crisprme considers single-nucleotide variants, accomadate bona fide haplotypes and handles spacer:protospacer mismatches and bulges. This tool is specifically designed to perform individuals-oriented analyses, considering the wide genetic diversity present in different populations.
 
 % ------ Genetic Variants
+%
+% ---> add figure with ref/alt allele - reference type (coding, non-coding) - SNV vs INS vs DEL - SVs
 \mychapter{2}{Genetic Variants}
-Genetic variants are modifications occurring in the DNA sequence within the genome of an organism. Mutations may result from errors during DNA replication processes, \emph{mitosis}, \emph{meiosis}, or other forms of DNA damage (such as the formation of pyrimidine dimers induced by exposure to ultraviolet radiation). In this discussion, we treat genetic variants and mutations as synonymous terms. Mutations may undergo error-prone repair processes, such as microhomology-mediated end joining (MEMJ) \citep{sinha2017microhomology, seol2018microhomology}, resulting in errors during repair and replication of the original DNA sequence \citep{rodgers2016error}. Mutations may consist in substitutions of single nucleotide in the sequence, as well as in insertions or deletions of DNA segments. The impact of mutations on the phenotype depends on several factors, ranging from the organism's genomic environment to the social environment in which the organism is located. While some genetic variants may not impact the phenotype, others may introduce differences in the organism's susceptibility to disease, response to drugs and treatments, or physical characteristics \citep{bodmer2008common, ingelman2018integrating, mitchell2007evolutionary}. Furthermore, mutations furnish the raw material upon which evolutionary forces, such as natural selection, can act \citep{akey2004population, teotonio2009experimental}. Genetic variants may occur either within gene sequences (coding regions), or outside genes (non-coding regions).  Mutations occurring in coding regions may have either advantageous or deleterious consequences on the organism's phenotype, by altering the gene product. Although variants in non-coding regions do not alter gene sequences, they still may impact gene products and the organism's phenotype \citep{zhang2015non}. 
+Genetic variants are modifications occurring in the DNA sequence within the genome of an organism. Mutations may result from errors during DNA replication processes, \emph{mitosis}, \emph{meiosis}, or other forms of DNA damage (such as the formation of pyrimidine dimers induced by exposure to ultraviolet radiation). In this discussion, we treat genetic variants and mutations as synonymous terms. Mutations may undergo error-prone repair processes, such as microhomology-mediated end joining (MEMJ) \citep{sinha2017microhomology, seol2018microhomology}, resulting in errors during repair and replication of the original DNA sequence \citep{rodgers2016error}. Mutations may consist in substitutions of single nucleotide in the sequence, as well as in insertions or deletions of DNA segments. The different versions of the same variant are referred to as \emph{alleles}. We define the variant observed in the reference (original) DNA sequence \emph{reference allele}, and any other distinct version from the reference is called \emph{alternative allele}.
+% ---> add figure reference
+The impact of mutations on the phenotype depends on several factors, ranging from the organism's genomic environment to the social environment in which the organism is located. While some genetic variants may not impact the phenotype, others may introduce differences in the organism's susceptibility to disease, response to drugs and treatments, or physical characteristics \citep{bodmer2008common, ingelman2018integrating, mitchell2007evolutionary}. Furthermore, mutations furnish the raw material upon which evolutionary forces, such as natural selection, can act \citep{akey2004population, teotonio2009experimental}. Genetic variants may occur either within gene sequences (coding regions), or outside genes (non-coding regions).  Mutations occurring in coding regions may have either advantageous or deleterious consequences on the organism's phenotype, by altering the gene product. Although variants in non-coding regions do not alter gene sequences, they still may impact gene products and the organism's phenotype \citep{zhang2015non}. 
 
 % ----- Genetic Variants Genesis
 \section{Genetic Variants Genesis}
+DNA may undergo naturally occurring or artificially induced modifications resulting in mutations. Mutations can occur spontaneously in nature, as result of exposure to chemical or physical agents increasing the mutation rate in DNA sequences called \emph{mutagens}, or induced experimentally using laboratory protocols (e.g. CRISPR genome editing \citep{cong2013multiplex}). Variants can be categorized in four classes depending on the process that induced the emergence of the mutations: (i) spontaneous mutations, (ii) error-prone translesion synthesis, (iii) errors introduced during DNA repair processes, and (iv) induced mutations resulting from exposure to mutagens. Spontaneous mutations occur randomly across the genome sequence even in healthy cells. Spontaneous mutations are caused by different random events, such as incorrect base pairing during DNA replication caused by tautomerism \citep{podolyan2003ab}, slipped-strand mispairing during replication \citep{levinson1987slipped}, deamination \citep{duncan1980mutagenic}, or depurination \citep{kunkel1984mutational}. Some spontaneous mutations are induced by error-prone replication mechanisms (translesion synthesis), acting on damaged DNA. While naturally occurring damages to the DNA sequence, such as double-strand breaks, exhibit low frequency, their repair processes often introduces mutations. A prominent pathway for repairing double-strand breaks is non-homologous end joining (NHEJ) \citep{weterings2008endless}. In NHEJ, a few nucleotides are removed to facilitate the imprecise alignment alignment of the broken ends for rejoining, and subsequently, additional nucleotides are added to fill the remaining gaps. However, as consequence NHEJ introduces insertions or deletions into the original DNA sequence \citep{weterings2008endless}. Finally, mutations may be induced by the exposure of DNA sequences to mutagens, such as chemical (nitrous acid, hydroxylamine, alkylating agents, etc.) or radiation (UV light, ionizing radiation) agents. Importantly, some mutagens are commonly found in the environment, and organisms are normally exposed to their action.
+
+% ----- Classifying Genetic Variants
+\section{Classifying Genetic Variants}
+During the years have been proposed different methods to classify genetic variants based on their inheritance, the modifications induced to the DNA structure, their location, and their impact on the gene product.
+
+% ---- Classifying Genetic Variants by their inheritance
+\subsection{Classifying Genetic Variants by their inheritance}
+In multicellular organisms, variants can be categorized in \emph{germline} mutations, which can be inherited by descendants, and \emph{somatic} mutations, which generally are not transmitted to descendants. Diploid organisms, such as human, possess two copies of each chromosome, one inherited from the father, the other from the mother. Depending on the occurrence of mutations on each chromosome, variants can be classified in three types: (i) heterozygous mutations, when only one copy of the chromosomes carries the alternative allele, (ii) homozygous mutations, when both copies carry the same alternative allele, and (iii) compound mutations, when the two copies carry different alternative alleles. Germline mutations occurring in the reproductive cells of an individual result in constitutional mutations in the offspring, spread in every organism's cell. Importantly, germline mutations have the potential to be transmitted through successive generations. A newly occurring germline mutation, not inherited from parents is defined \emph{de novo} mutation. Somatic mutations do not affect the germline and are generally not transmitted to descendants. However, they are inherited by all the progeny derived from a mutated cell within the same organism during mitosis. Somatic mutations are often linked to deleterious consequences for the cell, such as cancer \citep{martincorena2015somatic}. 
+
+% ---- Classifying Genetic Variants by their impact on DNA sequence structure
+\subsection{Classifying Genetic Variants by their impact on DNA sequence structure}
+Genetic variants can be classified in three classes based on the structural modification they induce to the DNA sequence: (i) single nucleotide variants (SNVs), (ii) insertions and deletions (indels), and (iii) structural variants.
+
+% --- Single nucleotide variants
+\subsubsection{Single Nucleotide Variants}
+A single nucleotide variant (SNV) denotes a germline substitution involving a single base at a precise position within the genome. For example a \texttt{G} occurring at a specific genome location may be replaced by an \texttt{A}. In this example the two alleles (nucleotide variations) are \texttt{G} (reference allele) and \texttt{A} (alternative allele). SNVs exhibits an allele frequency $< 1\%$. When single nucleotide substitutions show a frequency $\geq 1\%$ in the general population they are defined Single Nucleotide Polymorphisms (SNPs). The human genome within the global population has revealed the presence of over 600 million SNPs, which occur more frequently in non-coding regions than in coding. Human populations exhibit variations, leading to the prevalence of certain SNP alleles in specific geographic or ethnic groups while being comparatively rare in others. However, this variation is not frequent on a global scale \citep{bergstrom2020insights}. Within a population, SNPs can be characterized by their minor allele frequency (MAF). MAF is defined as the lowest frequency of an allele at a locus observed in a particular population. This frequency represents the lesser of the two allele frequencies for single-nucleotide polymorphisms.
+
+% --- Indels
+\subsubsection{Indels}
+Indel denote the insertion or deletion of nucleotides within a genome. Indels with length $\geq 50$ bp are often referred to as structural variants. Indels are used as genetic markers in natural populations, particularly in phylogenetic studies \citep{vali2008insertion}. Between $16\%$ and $25\%$ of all sequence polymorphisms in humans are likely to be represented by indels \citep{mills2006initial}. In most deeply studied genomes, as the human genome, indels frequency is notably lower compared to that of SNPs, except in the vicinity of highly repetitive regions, such as homopolymers and microsatellites.
+
+% --- Structural Variants
+\subsubsection{Structural Variants}
+
+% ---- Classifying Genetic Variants by their location
+\subsection{Classifying Genetic Variants by their location}
+
+% ---- Classifying Genetic Variants by their impact on gene product
+\subsection{Classifying Genetic Variants by their impact on gene product}
+
+% ----- Interpreting and understanding Genetic Variants impact 
+\section{Interpreting and understanding Genetic Variants impact}
+
+% ---- Genetic Variants Databases
+\subsection{Genetic Variants Databases}
+
+% ---- Identifying Genetic Variants
+\subsection{Identifying Genetic Variants}
+
+% ---- Discovering Variants - Trait associations
+\subsection{Discovering Variants - Trait associations}
+
+% ---- Limitations of current analysis methods
+\subsection{Limitations of current analysis methods}
+
+
+% ------ Genome Graphs
+\mychapter{3}{Genome Graphs}
+
+
 
 
 
@@ -240,144 +295,8 @@ The discovered motifs can be employed in several downstream analyses: motif comp
 	\caption[Software to assess genetic variants impact on transcription factor binding sites.]{\textbf{Software to assess genetic variants impact on transcription factor binding sites.} The table provides an overview of the tools for predicting the impact of variants on TFBS as discussed in Section 5. For each tool, the table report the employed TFBS model (Motif model), the original data type used to test each method in their original publication (Original input data type), the output type (Output), the year (Year) and the associated publication (Reference)}
 	\label{table:tfvariants}
 \end{table}
-% ------ MotifGraph
-\mychapter{3}{\motifgraph}
-Several studies have demonstrated that transcription factors exhibit binding sites that can vary across populations \citep{kasowski2010variation}, cell types \citep{arvey2012sequence, gertz2013distinct}, and even among individuals  \citep{tognon2021grafimo}. Employing algorithms that solely rely on the reference genome may yield generalized models, leading to erroneous predictions of TFBS when applied to personal genomics settings. A more robust approach involves the development of motif models incorporating data from diverse populations, cell types, or individual genomes, ultimately enhancung the accuracy of predictions regarding the occurrence of TFBS (\textbf{Fig.\ref{fig:ctcf_mg}}).
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/ctcf_mg.jpg}
-	\caption[Comparison between CTCF Motif Graph model and its PWM from the JASPAR database.]{\textbf{Comparison between CTCF MotifGraph model and its PWM from the JASPAR database.} On top the CTCF motif available on JASPAR database (MA0139.1). On the bottom the Motif Graph model trained using 100 $k$-mers obtained from a ChIP-seq experiment trageting CTCF binding site on HepG2 cell line.}
-	\label{fig:ctcf_mg}
-\end{figure} 
-Furthermore, these models offer the potential for more accurate predictions on the imoact of non-coding variants on TF-DNA binding events and allow for the encoding of variable orders of nucleotide dependencies. Notably, graph data structures often provide interpretable and intuitive frameworks. With these goals in mind, we have developed the \motifgraph framework, which seamlessly combines the strengths of probabilistic graphical-based and SVM-based motif discovery algorithms and models. The \motifgraph model $G$ is defined by a set of vertices $V$,  edges $E$, and paths $P$. Each vertex $v \in V$ in the graph is assigned a label representing a nucleotide, denoted mathematically as \text{label}$(v) \in {A, C, G, T}$.  Meanwhile, each edge $e \in E$ denotes the allowed connections between consecutive nucleotides within the TFBS motif. Further, each path $p \in P$ corresponds to a haplotype embedded in $G$ that represents an individual sequence used to train the \motifgraph model. Currently the model is primarily designed to encode first-order dependencies between consecutive nucleotides. However, it retains the flexibility to accomodate motifs of variable lengths, all while storing essential information about the training sequences.
-% ---- Motif Graph model construction
-\section{Motif Graph model construction}
-\motifgraph motif discovery process (\textbf{Algorithm \ref{algo:md_mg}}) encompasses two primary phases: the prioritization of $k$-mers and the training and construction of the graph model.  During the $k$-mer prioritization step, \motifgraph leverages the $k$-mer based motif discovery method proposed in LS-GKM \citep{ghandi2014enhanced, lee2016ls}. Within this framework, for each $k$-mer of length $k$ present in the positive sequence dataset $S$ and the background dataset $B$,  the algorithm tallies the number of matches in both $S$ and $B$,  accommodating mismatching positions. Subsequently, a cosine similarity kernel is trained using the frequencies of the recovered $k$-mers, with the trained kernel assigning a weight to each $k$-mer in $S$ and $B$. The $k$-mers weights reflect their influence in defining either the foreground or background dataset. The algorithm then sorts the $k$-mers based on their weight scores. The Motif Graph model undergoes an iterative training process employing a greedy approach, systematically incorporating the top-ranked $k$-mers into $G$, one by one (\textbf{Algorithm \ref{algo:mt_mg}}.) Each $k$-mer is aligned with the existing \motifgraph model, aiming to maximize the alignment of nucleotides with the current model. During this alignment process, the algorithm adjusts the input $k$-mer both to the right and left, within a specified offset number of nucleotides (a value set at 3 in our experiments). After constructing the model, we create a scoring matrix analogous to the well-known Position Specific Scoring Matrix (\emph{PSSM}), taking into account first-order nucleotide dependencies, akin to DWMs. This scoring matrix assigns a likelihood score and categorizes new sequences as potentially bound or not by the investigated factor. Essentially, the score indicates the likelihood of the scanned sequence containing a potential binding site. To score a sequence, we slide the scoring matrix along the string, employing a method akin to classical PWM scanning tools like FIMO \citep{grant2011fimo}.
-\begin{algorithm}
-	\DontPrintSemicolon
-	\KwInput{$S$, $B$, $k$}
-	\KwOutput{$G$}
 
-	frequencies $\gets$ countFrequencies($S$, $B$, $k$)
 
-	kernel $\gets$ trainKernel(frequencies)
-
-	kmers, weights $\gets$ extractWeights(kernel)
-
-	rankedKmer $\gets$ sort(kmers, weights)
-
-	$G \gets \emptyset$
-
-	\For{kmer in rankedKmers}
-	{
-		$G \gets$ addKmers($G$, kmer)
-	}
-
-	\Return{$G$}
-	\caption{\textbf{Motif Graph motif discovery.}}
-	\label{algo:md_mg}
-\end{algorithm}
-\begin{algorithm}
-	\DontPrintSemicolon
-	\KwInput{$G$, kmer, $i$}
-	\KwOutput{$G$}
-	
-	\If{$i = 1$}
-	{
-		\Return{$G$}
-	}
-
-	\For{$j$ in $1$ to $3$}
-	{
-		matchesLeftOffset, alignmnetLeft $\gets$ countMatchesLeftOffset($G$, kmer, $j$)
-	}
-
-	\For{$j$ in $1$ to $3$}
-	{
-		matchesRightOffset, alignmnetRight $\gets$ countMatchesRightOffset($G$, kmer, $j$)
-	}	
-	
-	alignment $\gets$ getBestAlignment(matchesLeftOffset, alignmentLeft, matchesRightOffset, alignmentRight)
-
-	$G \gets$ insertKmer($G$, alignment)
-
-	\Return{$G$}
-	\caption{\textbf{Motif Graph model training.}}
-	\label{algo:mt_mg}
-\end{algorithm}
-% ---- Testing the MotifGraph model
-\section{ Testing the \motifgraph model}
-% -- A preliminary training approach
-\subsection{A preliminary training approach}
-To test our motif discovery algorithm we obtained $10,000$ ChIP-seq peak sequences from the ENCODE Project database \citep{encode2012integrated} for CTCF and GATA1 obtained on the HepG2 and K562 cell lines, respectively. We sorted the ChIP-seq peaks according to their enrichment score, hence we tested our algorithm on reliable peaks. Interestingly, the trained \motifgraph models were closed to the motif PWMs on the JASPAR database \citep{sandelin2004jaspar} for both TFs (\textbf{Fig.\ref{fig:ctcf_mg}} and \textbf{Fig.\ref{fig:gata1_mg}}), capturing their consensus sequence. In the models the main motif sequences are highlighted by edge thickness, which is proportional to the number of training $k$-mers supporting each $p \in P$.
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/gata1_mg.jpg}
-	\caption[Comparison between GATA1 Motif Graph model and its PWM from the JASPAR database.]{\textbf{Comparison between GATA1 MotifGraph model and its PWM from the JASPAR database.} On top the GATA1 motif available on JASPAR database (MA0035.4). On the bottom the Motif Graph model trained using 100 $k$-mers obtained from a ChIP-seq experiment trageting GATA1 binding site on K562 cell line.}
-	\label{fig:gata1_mg}
-\end{figure} 
-We tested the discriminative power of CTCF and GATA1 \motifgraph, training the models with different numbers of $k$-mers (\textbf{Fig.\ref{fig:dp_mg}}), to establish the optimal number of training sequences. We assessed models' discriminative power via cross-validation splitting $S$ and $B$ (75\% training and 25\%, testing). We trained the models using 10, 50, 100, 200, 350, 500, and 750 $k$-mers. For CTCF the best prformance in terms of both AUC ($0.72$) and F1-score ($0.71$) were obtained using 100 $k$-mers (\textbf{Table \ref{table:ctcf_auc_f1}}). For GATA1 the model returned the best AUC using 200 $k$-mers ($0.76$), while the best F1-score ($0.70$) was obtained training the model with $100$ sequences (\textbf{Table \ref{table:gata1_auc_f1}}).
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/dp_mg.jpg}
-	\caption[Precision-Recall curves obtained varying the number of $k$-mers used to train the Motif Graph models.]{\textbf{Precision-Recall curves obtained varying the number of $k$-mers used to train the Motif Graph models.} To establish the number of training $k$-mers returning the best discriminative performance we computed the Precision-Recall curves of different Motif Graph models trained using 10, 50, 100, 200, 350, 500, and 750 $k$-mers on \textbf{(A)} CTCF and \textbf{(B)} GATA1}
-	\label{fig:dp_mg}
-\end{figure} 
-\begin{table}
-	\centering
-	\begin{tabular}{|p{3cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|}
-		\hline
-		\textbf{Training $k$-mers}& \textbf{$10$}& \textbf{$50$}& \textbf{$100$}& \textbf{$200$}& \textbf{$350$}& \textbf{$500$}& \textbf{$750$} \\
-		\hline
-		\textbf{AUC}& $0.69$& $0.69$& $0.72$& $0.63$& $0.60$& $0.55$& $0.55$\\
-		\hline
-		\textbf{F1-score}& $0.62$& $0.69$& $0.71$& $0.65$& $0.62$& $0.57$& $0.56$\\
-		\hline
-	\end{tabular}
-	\caption[CTCF Motif Graph model AUC and F1-scores values with different number of training $k$-mers.]{\textbf{CTCF Motif Graph model AUC and F1-scores values with different number of training $k$-mers.}}
-	\label{table:ctcf_auc_f1}
-\end{table}
-\begin{table}
-	\centering
-	\begin{tabular}{|p{3cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|p{1.cm}|}
-		\hline
-		\textbf{Training $k$-mers}& \textbf{$10$}& \textbf{$50$}& \textbf{$100$}& \textbf{$200$}& \textbf{$350$}& \textbf{$500$}& \textbf{$750$} \\
-		\hline
-		\textbf{AUC}& $0.73$& $0.75$& $0.75$& $0.76$& $0.74$& $0.74$& $0.71$\\
-		\hline
-		\textbf{F1-score}& $0.68$& $0.68$& $0.70$& $0.69$& $0.70$& $0.69$& $0.67$\\
-		\hline
-	\end{tabular}
-	\caption[GATA1 Motif Graph model AUC and F1-scores values with different number of training $k$-mers.]{\textbf{GATA1 Motif Graph model AUC and F1-scores values with different number of training $k$-mers.}}
-	\label{table:gata1_auc_f1}
-\end{table}
-We also compared \motifgraph models discriminative power against the corresponding PWMs and DWMs downloaded from JASPAR \citep{sandelin2004jaspar} and HOCOMOCO \citep{kulakovskiy2016hocomoco}, respectively. For CTCF, both PWM and DWM showed better performance than our model (\textbf{Fig.\ref{fig:dp_mg_pwm_dwm} (A)}). On the other hand, on GATA1 data our model behaved better than PWMs, although it still performed worse than DWMs (\textbf{Fig.\ref{fig:dp_mg_pwm_dwm} (B)}).
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/dp_mg_pwm_dwm.jpg}
-	\caption[Comparing Motif Graph, PWM, and DWM Precision-Recall curves.]{\textbf{Comparing Motif Graph, PWM, and DWM Precision-Recall curves.} We compared the discriminative power of the Motif Graph models against that of PWMs and DWMs for both \textbf{(A)} CTCF and \textbf{(B)} GATA1.}
-	\label{fig:dp_mg_pwm_dwm}
-\end{figure} 
-% -- Improving k-mers prioritazion
-\subsection{Improving $k$-mers prioritazion}
-To improve the performance of our models we focused on improving $k$-mers selection procedure.  To this goal in mind, we developed a $k$-mers prioritazition procedure similar to LS-GKM algorithm. Given $S$ and $B$, we compute gapped $k$-mers frequencies for each sequence in the input datasets. Using the gapped $k$-mers frequencies we compute a cosine similarity matrix measuring cosine similarity between each sequence pair in $S$ and $B$.  We then identify potential sequence clusters running the Leiden algorithm \citep{traag2019louvain} on a graph $G_{L}$ constructed from the cosine similarity matrix. $G_{L}$ is defined by a set of vertices $V$ and edges $E$, where each $v \in V$ is a sequence in $S$ and $B$, $e \in E$ is a term of comparison between two sequences, and \text{weight}$(e)$ is the cosine similarity value between the two sequences linked by $e$. We then train a \motifgraph $G$ with ech sequence cluster separately.  To test our procedure we used CTCF ChIP-seq peak sequences on K562 cell lines for $S$, while $B$ was obtained by shuffling the sequences in $S$, maintaining first-order dependencies.By plotting the cosine similarity matrix using UMAP we observe two clear clusters separating foreground (bound) and background (unbound) sequences (\textbf{Fig.\ref{fig:motifgraph1} (A)}). Furthermore, the clusters correlates with the binding affinity scores computed running FIMO \citep{grant2011fimo} on the sequences in $S$ and $B$ (\textbf{Fig.\ref{fig:motifgraph1} (B)}).
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/motifgraph1.png}
-	\caption[UMAP plot of foreground and background sequence clusters]{\textbf{UMAP plot of foreground and background sequence clusters. (A)} Plotting the cosine similarity matrix with UMAP computed on CTCF ChIP-seq data (cell line K562) the foreground and background sequence clusters are identified. \textbf{(B)} The  clusters correlates with the binding affinity scores computed on the sequences running FIMO.}
-	\label{fig:motifgraph1}
-\end{figure} 
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/motifgraph2.png}
-	\caption[Leiden algorithm identifies five clusters]{\textbf{Leiden algorithm identifies five clusters. (A)} Running the Leiden algorithm on $G_{L}$ identifies five clusters. While it keeps background sequences in a single cluster, it splits foreground sequences in four different clusters. \textbf{(B)} $K$-means clustering identifies different sequence clusters and often splits even the background sequences cluster.}
-	\label{fig:motifgraph2}
-\end{figure} 
-
-By running Leiden algorithm on $G_{L}$, it identifies five different clusters. While it keeps the background sequences in a single cluster, the foreground sequences are divided in four clusters (\textbf{Fig.\ref{fig:motifgraph2} (A)}).  To assess Leiden's results, we run $k$-means on the cosine similarity matrix using $k \in {4,5,6,7,8}$. However, increasing $k$ the algorithm split even the background sequences in different clusters, suggesting poor clustering performance \textbf{Fig.\ref{fig:motifgraph2} (B)}).
-% -- Future directions
-\section{Future directions}
-In the next future we plan to construct the \motifgraph using the sequences prioritized by the Leiden algorithm in a cluster-wise fashion. , We expect that different cluster will return different motifs,  corresponding to different motif grammars recovered from different genomic regions. That enforces our initial aim of providing a comprehensive model learning different features in a single framework.
 % ------- Predicting genetic variants impact on transcription factor binding sites
 \mychapter{5}{Predicting genetic variants impact on transcription factor binding sites}
 Many have highlighted the significant influence of genetic variations on TF-DNA binding events \citep{de2006regulatory, weinhold2014genome, guo2018mutation}. Genome-wide association studies (GWASs) have revealed thousands of genetic variants, known as single nucleotide polymorphisms (SNPs), that are associated with complex human traits. Notably, these SNPs are typically situated within noncoding regions of the genome, many of which function as regulatory elements such as enhancers \citep{maurano2012systematic} Consequently, SNPs have the potential to influence gene expression by modulating TF-DNA interactions. These genetic variants can disrupt TF-DNA binding sequences, potentially leading to alterations in downstream gene expression patterns \citep{deplancke2016genetics}. Crucially, mutations that affect transcription factor binding sites (TFBS) can persist within specific haplotypes found in populations \citep{kasowski2010variation},, contributing to the emergence of population-specific TFBS. Similarly, genetic variability between cell types can give rise to cell-type-specific TF target sequences. Therefore, it becomes imperative to develop software tools capable of predicting the potential impact of genetic variations on TFBS specificity, while also considering haplotype and cell-type-specific mutations.  In pursuit of this goal, we have introduced two tools designed for predicting the effects of mutations on TFBS within haplotypes and across different cell types. \grafimo \citep{tognon2021grafimo} is a variant- and haplotype-aware motif scanning tool searching potential occurrences of known TF motifs on genome graphs \citep{paten2017genome}. Briefly, genome graphs are graph-based data structures, where nodes correspond to DNA sequences and edges describe allowed links between successive sequences. Paths through the graph, which may be labelled (such as in the case of a reference genome), correspond to haplotypes belonging to different genomes \citep{siren2020haplotype} (\textbf{Fig.\ref{fig:vg}}). \motifraptor \citep{yao2021motif} investigates the imapct of genetic variants on TFBS interpolating different omics data, such as cell type-specific transcriptomic data and chromatin accessibility. In particular, \motifraptor is designed to support researchers while annotating variants located within non-coding regions, and provides a potential functional annotation for these mutations. In our research we extend the current \motifraptor to employ SVM-based motif models (\textbf{section 2.1.2}), which often provide better predictions on variants impact than PWM models \citep{tognon2023survey}.
