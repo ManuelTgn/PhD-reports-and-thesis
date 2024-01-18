@@ -17,6 +17,7 @@
 \usepackage{changepage}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{multirow}
 
 % force page number on page bottom part
 \usepackage{fancyhdr} 
@@ -307,82 +308,200 @@ Support Vector Machines (SVMs) \citep{boser1992training} have proven successful 
 
 % --- Deep Neural Networks-based methods
 \subsubsection{Deep Neural Networks-based methods}
-DNNs have become increasingly popular in computational biology \citep{talukder2021interpretation, zeng2020integrating, singh2016deepchrome, singh2019predicting, zeng2018prediction, kelley2018sequential, li2019deeptact, yin2019deephistone, manzanarez2018model}. due to their ability to learn complex patterns \citep{park2015deep} from large omics datasets \citep{zhang2019deep}. Convolutional neural networks (CNNs)  \citep{lecun2015deep} , originally developed for image classification \citep{lecun2015deep, sainath2013improvements, vu2017use},  have been successfully applied to analyze in vivo TF–DNA interactions \citep{alipanahi2015predicting, zhou2015predicting, kelley2016basset, zeng2016convolutional} (\textbf{Fig.\ref{fig:md}}). CNNs apply non-linear transformation to input data, learning and representing complex patterns in a high-dimensional space \citep{bengio2013representation} This simplifies classification tasks and enables accurate prediction of TFBS in genomic sequences. CNNs represent genomic sequences as 1D or 2D images with four associated channels (A, C, G, T) \citep{zeng2016convolutional}. Therefore, classifying TFBS in genomic sequences becomes a two-class image classification problem. Typically, CNN architectures designed for motif discovery and classification consist of one or more sets of four layers: the convolutional layer, the max-pooling layer, the fully connected NN layer and the output layer \citep{zeng2016convolutional}. DeepBind \citep{alipanahi2015predicting} and Basset \citep{kelley2016basset} proposed two CNN architectures to discover motifs in different datasets, such as ChIP-seq, HT-SELEX, PBM and DNase-seq. The discovered motifs in DeepBind and Basset are visualized as PWMs. The PWMs are computed by aligning and grouping the sequences that activate the convolutional layer. While DeepBind and Basset have demonstrated promising results in predicting TFBS, their performance may be limited by the quality of training data and the significant computational resources and time required for model training. These limitations have led to the development of novel methods, such as BPNet \citep{avsec2021base},  which address some of these issues by incorporating additional features in the model and using more efficient training processes. BPNet proposed a dilated CNN architecture, allowing the model to learn and integrate diverse complex features without sacrificing the spatial and base resolution of the input data.  However, TF–DNA interactions involve not only the direct binding between TF and DNA but also the interactions between multiple binding subregions (long-term interactions) and the nucleotides with high-order structures of TFs (short-term interactions). Long short-term memory networks (LSTMs) \citep{hochreiter1997long} and bi-directional LSTMs (BLSTMs) can efficiently capture long-term and short-term dependencies of sequential signals. LSTMs and BLSTMs are well suited for modeling TF–DNA interactions as genomic sequences can be viewed as sequential signals with long-term and short-term dependencies. DeeperBind \citep{hassanzadeh2016deeperbind}  introduced a hybrid CNN–LSTM architecture removing the pooling layer to maintain the positional information of potential motif instances. Similarly, DanQ  \citep{quang2016danq}  proposed a hybrid CNN–BLSTM architecture to capture the positional dynamics of genomic sequences for TFBS motif discovery. The BLSTM replaces the fully connected NN. Factornet \citep{quang2019factornet} extended the DanQ approach by incorporating additional features in the model and using a Siamese BLSTM architecture to improve model training.
+DNNs have gained significant popularity in computational biology \citep{talukder2021interpretation, zeng2020integrating, singh2016deepchrome, singh2019predicting, zeng2018prediction, kelley2018sequential, li2019deeptact, yin2019deephistone, manzanarez2018model} owing to their ability to discern complex patterns \citep{park2015deep} from large omics datasets \citep{zhang2019deep}. Originally designed for image classification  \citep{lecun2015deep, sainath2013improvements, vu2017use}, Convolutional Neural Networks (CNNs) \citep{lecun2015deep} have proven successful in analyzing \emph{in vivo} TF–DNA interactions \citep{alipanahi2015predicting, zhou2015predicting, kelley2016basset, zeng2016convolutional} (\textbf{Figure \ref{fig:motif_discovery}}). By applying non-linear transformations to input data, CNNs learn and represent complex patterns in a high-dimensional space \citep{bengio2013representation}, simplifying classification tasks and enabling accurate prediction of TFBS in genomic sequences. Genomic sequences are often represented as 1D or 2D images with four associated channels (A, C, G, T) \citep{zeng2016convolutional}, transforming TFBS classification into a two-class image classification problem. Typically, CNN architectures for motif discovery and classification consist of sets of four layers: the convolutional layer, max-pooling layer, fully connected NN layer, and the output layer \citep{zeng2016convolutional} (\textbf{Appendix \ref{appendix:motifdiscovery}.1.5}). DeepBind \citep{alipanahi2015predicting} and Basset \citep{kelley2016basset} introduced two CNN architectures for motif discovery across different datasets, including ChIP-seq, HT-SELEX, PBM, and DNase-seq (\textbf{Appendix \ref{appendix:motifdiscovery}.1.5}). The motifs discovered by DeepBind and Basset are visualized as PWMs, computed by aligning and grouping sequences that activate the convolutional layer. While DeepBind and Basset have shown promising results, their performance may be constrained by the quality of training data and the significant computational resources and time required for model training. These challenges have spurred the development of novel methods like BPNet \citep{avsec2021base}, which address some of these issues by incorporating additional features into the model and using more efficient training processes. BPNet proposed a dilated CNN architecture that enables the model to learn and integrate diverse complex features without sacrificing the spatial and base resolution of the input data (\textbf{Appendix \ref{appendix:motifdiscovery}.1.5}). However, TF–DNA interactions involve not only direct binding but also interactions between multiple binding subregions (long-term interactions) and nucleotides with high-order structures of TFs (short-term interactions). Long Short-Term Memory networks (LSTMs) \citep{hochreiter1997long} and Bidirectional LSTMs (BLSTMs) efficiently capture long-term and short-term dependencies in sequential signals. Given that genomic sequences can be viewed as sequential signals with long-term and short-term dependencies, LSTMs and BLSTMs are well-suited for modeling TF–DNA interactions (\textbf{Appendix \ref{appendix:motifdiscovery}.1.5}). DeeperBind \citep{hassanzadeh2016deeperbind} introduced a hybrid CNN–LSTM architecture by removing the pooling layer to maintain positional information of potential motif instances. Similarly, DanQ \citep{quang2016danq} proposed a hybrid CNN–BLSTM architecture to capture the positional dynamics of genomic sequences for TFBS motif discovery. The BLSTM replaces the fully connected NN. Factornet \citep{quang2019factornet} extended DanQ's framework by incorporating additional features and employing a Siamese BLSTM architecture to enhance model training.
 
-% ---- Transcription factor binding sites databases
-\section{Transcription factor binding sites databases}
-With the recent advancement in experimental technologies, a vast amount of TF-related data have been generated and stored in databases (\textbf{Table \ref{table:tfdbs}}). The ENCODE project \citep{encode2012integrated} provides multiple data on functional elements in the human genome collected across different tissues and cell types. ENCODE stores TF-related genomic data such as ChIP-seq targeting several TFs and DNase-seq. Similarly, Cistrome \citep{zheng2019cistrome} and GTRD \citep{kolmykov2021gtrd} provide TF-related genomic data from different organisms and across different species, cell types and tissues, respectively. Furthermore, GTRD stores large collections of curated ChIP-seq, ChIP-exo and ChIP-nexus datasets. HOCOMOCO  \citep{kulakovskiy2013hocomoco, kulakovskiy2018hocomoco} and JASPAR  \citep{sandelin2004jaspar, fornes2020jaspar} provide large collections of curated, experimentally derived and computationally predicted TFBS motifs for several TFs from different species. They store PWMs and DWMs obtained by analyzing ChIP-seq and SELEX datasets. In addition, HOCOMOCO models were generated integrating sequence datasets with evolutionary conservation and DNA shape. Similarly, Cis-BP \citep{weirauch2014determination} stores experimentally derived and computationally predicted PWMs, obtained integrating multiple sources, including published literature, other databases and experimental datasets. TRANSFAC \citep{wingender1996transfac, wingender2000transfac} collects experimentally validated and manually curated PWMs for various TFs from different eukaryotic organisms, and includes data on TF-associated proteins, DNA binding domains and, regulatory elements. FactorBook \citep{pratt2022factorbook} provides computationally predicted PWMs generated analyzing ENCODE data and includes TF expression data across tissues and cell types. Unibind \citep{puig2021unibind} collects experimentally validated and curated PWMs from different organisms, providing information on structural properties and conformation of TF–DNA complexes and their genomic binding locations across different cell types and tissues. UniPROBE \citep{newburger2009uniprobe} stores curated PWMs for several eukaryotic TFs, generated analyzing PBM datasets. HTRIdb \citep{bovolenta2012htridb} stores data on TF–target genes interactions in human, collected from published literature and other databases, in different cell types, experimental methods and disease state, also providing functional annotations for the target genes. TFcancer \citep{huang2021tfcancer} collects TF–gene interactions across 33 cancer types, providing tools to identify TF expression alterations and their roles in biological processes and signaling pathways in cancer.
-\begin{longtable}{|p{2cm}|p{2cm}|p{3cm}|p{2cm}|p{4cm}|p{2cm}|}
-	%\centering
-	%\begin{tabular}{|p{2cm}|p{2cm}|p{3cm}|p{2cm}|p{4cm}|p{2cm}|}
-		\hline
-		\textbf{Type}& \textbf{Name}&\textbf{Reference}&\textbf{Data type}& \textbf{Model organism}& \textbf{TFs} \\
-		\hline
-		Sequence database & ENCODE & \citep{encode2012integrated} & ChIP-seq \newline DNase-seq \newline ATAC-seq & \emph{Caenorhabditis elegans} \newline \emph{Drosophila melanogaster} \newline \emph{H. sapiens} \newline \emph{M. musculus} & $>$ 1,500 \\
-		\hline
-		Sequence database & Cistrome & \citep{zheng2019cistrome} & ChIP-seq \newline DNase-seq & \emph{H. sapiens} \newline \emph{M. musculus} & 1,773 (ChIP-seq) \\
-		\hline
-		Sequence database & GTRD & \citep{kolmykov2021gtrd} & ChIP-seq \newline ChIP-exo \newline ChIP-nexus \newline DNase-seq & \emph{A. thaliana} \newline \emph{C. elegans} \newline \emph{D. rerio}  \newline \emph{D. melanogaster} \newline \emph{H. sapiens} \newline \emph{M. musculus} \newline \emph{R. norvegicus} \newline \emph{S. cerevisiae} \newline \emph{S. pombe}  & 3,988 (ChIP-seq) \newline 1,708 (ChIP-exo + ChIP-nexus) \\
-		\hline
-		Motif models database & HOCOMOCO & \citep{kulakovskiy2013hocomoco, kulakovskiy2018hocomoco} & PWMs \newline DWMs & \emph{H. sapiens} \newline \emph{M. musculus} & 680 (human) \newline 453 (mouse) \\
-		\hline
-		Motif models database & JASPAR & \citep{sandelin2004jaspar, fornes2020jaspar} & PWMs \newline DWMs & 53 species & $>$ 1,500 \\
-		\hline
-		Motif models database & Cis-BP & \citep{weirauch2014determination} & PWMs & \emph{A. thaliana} \newline \emph{C. elegans} \newline \emph{D. rerio}  \newline \emph{D. melanogaster} \newline \emph{H. sapiens} \newline \emph{M. musculus} \newline \emph{N. crassa} \newline \emph{R. norvegicus} \newline \emph{S. cerevisiae} \newline \emph{X. tropicalis} & $>$ 5,000 \\
-		\hline
-		Motif models database & TRANSFAC & \citep{wingender1996transfac, wingender2000transfac} & PWMs & $>$ 300 species & $>$ 10,000 \\
-		\hline
-		Motif models database & FactorBook & \citep{pratt2022factorbook} & PWMs & \emph{H. sapiens} \newline \emph{M. musculus}  & $>$ 881 (human) \newline 49 (mouse) \\
-		\hline
-		Motif models database & Unibind & \citep{puig2021unibind} & PWMs &\emph{A. thaliana} \newline \emph{C. elegans} \newline \emph{D. rerio}  \newline \emph{D. melanogaster} \newline \emph{H. sapiens} \newline \emph{M. musculus} \newline \emph{R. norvegicus} \newline \emph{S. cerevisiae} \newline \emph{S. pombe}  & 841 \\
-		\hline
-		Motif models database & UniPROBE & \citep{newburger2009uniprobe} & PWMs & \emph{C. elegans} \newline \emph{C. parvum} \newline \emph{H. sapiens} \newline \emph{M. musculus} \newline \emph{P.falciparum} \newline \emph{S. cerevisiae} \newline \emph{V. harveyi}  & 726 \\
-		\hline
-		TF–target gene interaction database  & HTRIdb & \citep{bovolenta2012htridb} & TF–gene interaction networks & \emph{H. sapiens} & 284 \\
-		\hline
-		TF–disease association database  & TFcancer & \citep{huang2021tfcancer} & TF–cancer associations & \emph{H. sapiens} & 364 \\
-		\hline
-	%\end{tabular}
-	\caption[Transcription factor-related databases.]{The table presents a summary of the TF-related databases discussed in Section 4. For each database, the table reports the database main purpose (Type), the available type of data (Data type), the model organisms for which data are provided (Model organisms), the number of TFs (TFs) and the database website (Website).}
-	\label{table:tfdbs}
-\end{longtable}
-% ---- Downstream analysis on transcription factor binding sites
-\section{Downstream analysis on transcription factor binding sites}
-The discovered motifs can be employed in several downstream analyses: motif comparison, motif scanning, motif enrichment analysis and assessing genetic variants effects on TF–DNA binding affinity \citep{tognon2023survey}. Motif comparison measures the similarity between the discovered motifs and annotated TFBS. Motif comparison allows for linking known TFs to the newly discovered motifs \citep{gupta2007quantifying} and inferring the relationship between the input sequences and function of the annotated TF \citep{weirauch2014determination}. For this task, several tools have been developed such as Tomtom, STAMP, MACRO-APE or MoSBAT \citep{gupta2007quantifying, mahony2007stamp, vorontsov2013jaccard, lambert2016motif}. These tools search annotated database for motifs matching the input consensus sequence or inferred motif matrix. Moreover, motif comparison tools have been developed to interpret and annotate the potential motifs encoded in the convolutional filters of a CNN model. Motif scanning scans sets of genomic regions searching for potential occurrences of the input motif. The goal is to recover sets of potential binding locations for the investigated factor. Given a motif model (e.g. a PWM) and a set of sequences, motif scanning algorithms assign a score to each sequence using the input model. A common challenge is to determine a reliable cutoff on the scores assigned to the sequences to discriminate between true and false binding events \citep{boeva2016analysis}. Several motif scanning tools are currently available such as MOODS, FIMO or PWMscan \citep{korhonen2009moods, grant2011fimo, ambrosini2018pwmscan}. The HOMER suite \citep{heinz2010simple} also provides a motif scanning functionality. Recently, MOODS was extended to search instances of motifs modeled as high-order PWMs \citep{korhonen2017fast}. \grafimo \citep{tognon2021grafimo} extended classical motif scanning to panels of thousands of genomes encoded in genome graphs \citep{paten2017genome}, considering individual genetic variants and haplotypes while searching for potential motif occurrences. Motif enrichment analysis (MEA) searches for over- and underrepresented motifs in gene regulatory regions. Analyzing the TFBS enrichment in regulatory regions governing sets of genes, researchers can link the investigated TFs to their function within the cell environment. MEA consists of two steps: (i) scanning regulatory regions for motif occurrences and (ii) statistical testing of motif enrichment. TFs whose motifs are significantly overrepresented (enriched) in the scanned regulatory regions are marked as transcriptional regulators for the target gene set. There are many MEA tools available to the community, such as Clover, Pscan, AME or oPOSSUM-3 \citep{frith2004detection, zambelli2009pscan, mcleay2010motif, kwon2012opossum}. HOMER \citep{heinz2010simple} provides a functionality to perform MEA. Haystack \citep{pinello2018haystack} proposed an integrated MEA strategy, investigating motif enrichment in cell-type-specific regions and incorporating gene expression data to assess the transcriptional activity of the studied factors and their impact on the regulated genes. Genetic variants have been shown to impact TF–DNA binding events \citep{de2006regulatory, wienert2015editing, weinhold2014genome} including variants associated with common diseases in regulatory elements \citep{maurano2012systematic} potentially altering the transcriptional state of the cell \citep{deplancke2016genetics}. As a result, there has been a growing interest in developing tools to predict the impact of variants on TFBS (\textbf{Table \ref{table:tfvariants}}). TRAP \citep{thomas2011transcription} and CATO \citep{maurano2015large} use PWMs to predict the impact of variants on TFBS by comparing the binding affinity scores of reference and alternative sequences. TRAP repeats the procedure on a collection of TFBS, reporting the motif showing the largest score change. CATO, instead, provides a ranked list of disrupted motifs, obtained using a logistic model trained with the information content difference between reference and alternative sequences, TF occupancy and phylogenetic conservation. However, these methods are not scalable when analyzing thousands of single nucleotide polymorphisms (SNPs). atSNP \citep{zuo2015atsnp} proposed a scalable strategy to assess the impact of thousands of SNPs on TFBS by computing the statistical significance of the computed affinity scores, in addition to the difference between the reference and alternative sequence binding scores using PWMs. \grafimo \citep{tognon2021grafimo} extended the scalability to millions of SNPs by scanning collections of PWMs on genome graphs, while accounting for haplotypes. \motifraptor \citep{yao2021motif} integrates chromatin accessibility, gene expression and GWAS summary statistics, to predict and annotate functional effects for large non-coding variant datasets, using PWMs. DeltaSVM \citep{lee2015method} and GkmExplain \citep{shrikumar2019gkmexplain} se SVM-based motif models to assess variant impact. DeltaSVM scans DNA positions overlapping each SNP in the input dataset using a pretrained list of $k$-mers with associated weights and computing the difference between the reference and alternative sequence scores. However, it assesses the impact of individual variants, not accounting for relationships between variants. GkmExplain overcomes this limitation by considering the impact of variants not in individual positions, but on sequence features, like entire $k$-mers. DeepBind \citep{alipanahi2015predicting} and DeepSEA \citep{zhou2015predicting}  employ DNN-based models to predict variant impact on TFBS. DeepBind uses mutation maps to assess variant effect on binding affinities by considering the importance of each motif position within the model. DeepSEA uses in silico saturated mutagenesis to predict the impact of individual variants on the whole sequence context and features like TFBS. Similarly, Basset \citep{kelley2016basset} employs in silico saturated mutagenesis by learning critical nucleotides governing chromatin accessibility. Basset assigns importance scores to each position in the input sequences and attempts to map the variants’ impact to the TFBS in the input sequences. Basenji  \citep{kelley2018sequential} extends Basset’s workflow by providing functional annotations to SNPs affecting sequence features like TFBS and returning potential changes in gene expression patterns. However, Basenji is limited to predict SNP effects on distal regulatory elements within a 20 kb range. Enformer \citep{avsec2021effective} overcomes this limitation by employing transformer architectures to extend the range up to 200 kb, providing more comprehensive and accurate functional effects of variants on sequence elements and gene expression.
-\begin{table}
-	\centering
-	\begin{tabular}{|p{2cm}|p{2cm}|p{3cm}|p{3cm}|p{3cm}|p{1cm}|}
-		\hline
-		\textbf{Motif model}& \textbf{Software}&\textbf{Reference}&\textbf{Original input data type}& \textbf{Output}& \textbf{Year} \\
-		\hline
-		PWM & TRAP & \citep{thomas2011transcription} & ChIP-seq & Allele-specific score & 2011 \\
-		\hline
-		PWM & CATO score & \citep{maurano2015large} & DHS sites & Ranked list of TFBS affected by SNPs & 2015 \\
-		\hline
-		PWM & atSNP & \citep{zuo2015atsnp} & Sequences overlapping input SNPs  &  Allele-specific score  & 2015 \\
-		\hline
-		PWM & \grafimo & \citep{tognon2021grafimo} & ChIP-seq  &  Allele-specific score  & 2021 \\
-		\hline
-		PWM & \motifraptor & \citep{yao2021motif} & DNase-seq  &  Allele-specific score  & 2021 \\
-		\hline
-		SVM based & DeltaSVM & \citep{lee2015method} & DNase-seq  &  Allele-specific score  & 2015 \\
-		\hline
-		SVM based & GkmExplain & \citep{shrikumar2019gkmexplain} & DNase-seq  &  SNP impact on whole TFBS  & 2019 \\
-		\hline
-		DNN based & DeepBind & \citep{alipanahi2015predicting} & ChIP-seq, HT-SELEX &  Single SNP impact  & 2015 \\
-		\hline
-		DNN based & DeepSEA & \citep{zhou2015predicting} & ATAC-seq, DNase-seq  &  Single SNP impact  & 2015 \\
-		\hline
-		DNN based & Basset & \citep{kelley2016basset} & ChIP-seq, DNase-seq  &  Single SNP impact  & 2016 \\
-		\hline
-		DNN based & Basenji & \citep{kelley2018sequential} & ChIP-seq, DNase-seq  &  Single SNP functional impact  & 2018 \\
-		\hline
-		DNN based & Enformer & \citep{avsec2021effective} & DNA sequences  &  SNP functional impact  & 2021 \\
-		\hline
-	\end{tabular}
-	\caption[Software to assess genetic variants impact on transcription factor binding sites.]{\textbf{Software to assess genetic variants impact on transcription factor binding sites.} The table provides an overview of the tools for predicting the impact of variants on TFBS as discussed in Section 5. For each tool, the table report the employed TFBS model (Motif model), the original data type used to test each method in their original publication (Original input data type), the output type (Output), the year (Year) and the associated publication (Reference)}
-	\label{table:tfvariants}
+% ---- Transcription Factor Databases
+\subsection{Transcription Factor Databases}
+With the recent advancements in experimental technologies, an extensive amount of transcription factor-related data has been generated and has been stored in different databases (\textbf{Table \ref{tab:motif_databases}}). The ENCODE project \citep{encode2012integrated} stands out as a valuable resource, offering a multitude of data on functional elements within the human genome, gathered across different tissues and cell types. ENCODE stores several TF-related genomic data encompassing ChIP-seq data targeting various TFs and DNase-seq information. Similarly, Cistrome \citep{zheng2019cistrome} and GTRD \citep{kolmykov2021gtrd} contribute to the landscape by providing TF-related genomic data from different organisms and spanning various species, cell types, and tissues. GTRD, in particular, provides extensive collections of curated ChIP-seq, ChIP-exo, and ChIP-nexus datasets. HOCOMOCO \citep{kulakovskiy2013hocomoco,kulakovskiy2018hocomoco} and JASPAR \citep{sandelin2004jaspar,fornes2020jaspar} provide large collections of curated and experimentally derived TFBS motifs. These databases store Position Weight Matrices (PWMs) and Dinucleotide Weight Matrices (DWMs) obtained through the analysis of ChIP-seq and SELEX datasets. Notably, HOCOMOCO models integrate sequence datasets with evolutionary conservation and DNA shape. Similarly, Cis-BP \citep{weirauch2014determination} incorporates experimentally derived and computationally predicted PWMs from various sources, including published literature, other databases, and experimental datasets. TRANSFAC \citep{wingender1996transfac,wingender2000transfac} emerges as a comprehensive repository, collecting experimentally validated and manually curated PWMs for different TFs from diverse eukaryotic organisms. It includes data on TF-associated proteins, DNA binding domains, and regulatory elements. FactorBook \citep{pratt2022factorbook} provides computationally predicted PWMs generated by analyzing ENCODE data, coupled with TF expression data across tissues and cell types. Unibind \citep{puig2015human} collects experimentally validated and curated PWMs from different organisms. It provides insights on the structural properties and conformation of TF–DNA complexes, along with their genomic binding locations across various cell types and tissues. UniPROBE \citep{newburger2009uniprobe} stores curated PWMs for several eukaryotic TFs, generated by analyzing Protein Binding Microarray datasets. HTRIdb \citep{bovolenta2012htridb} focuses on data pertaining to TF–target gene interactions in humans. This information, derived from published literature and other databases, spans different cell types, experimental methods, and disease states. The database also provides functional annotations for the target genes. TFcancer \citep{huang2021tfcancer} collects TF–gene interactions across 33 cancer types. The database offers tools to identify TF expression alterations and elucidate their roles in biological processes and signaling pathways associated with cancer.
+
+% - table: Transcription Factor databases
+\begin{table}[!]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+        \begin{tabular}{|l|l|l|l|l|l|}
+            \hline
+            \textbf{Type} &
+            \textbf{Name} &
+            \textbf{Reference} &
+            \textbf{Data type} &
+            \textbf{Model Organisms} &
+            \textbf{TFs} \\ \hline
+            Sequence database &
+            ENCODE &
+            \cite{encode2012integrated} &
+            \begin{tabular}[c]{@{}l@{}}ChIP-seq\\ DNase-seq\\ ATAC-seq\end{tabular} &
+            \textit{\begin{tabular}[c]{@{}l@{}}C. elegans\\ D. melanogaster\\ H. sapiens\\ M. musculus\\ \hfill \end{tabular}} &
+            \textgreater 1,500 \\ 
+            &
+            Cistrome &
+            \cite{zheng2019cistrome} &
+            \begin{tabular}[c]{@{}l@{}}ChIP-seq\\ DNase-seq\end{tabular} &
+            \textit{\begin{tabular}[c]{@{}l@{}}H. sapiens\\ M. musculus\\ \hfill \end{tabular}} &
+            1,773 (ChIP-seq) \\ 
+            &
+            GTRD &
+            \cite{kolmykov2021gtrd} &
+            \begin{tabular}[c]{@{}l@{}}ChIP-seq\\ ChIP-exo\\ ChIP-nexus\\ DNase-seq\end{tabular} &
+            \textit{\begin{tabular}[c]{@{}l@{}}A. thaliana\\ C. elegans\\ D. rerio\\ D. melanogaster\\ H. sapiens\\ M. musculus\\ R. norvegicus\\ S. cerevisiae\\ S. pombe\end{tabular}} &
+            \begin{tabular}[c]{@{}l@{}}3,988 (ChIP-seq)\\ 1,708 (ChIP-exo + ChIP-nexus)\end{tabular} \\ \hline
+            Motif models database &
+            HOCOMOCO &
+            \cite{kulakovskiy2013hocomoco,kulakovskiy2018hocomoco} &
+            \begin{tabular}[c]{@{}l@{}}PWMs\\ DWMs\end{tabular} &
+            \textit{\begin{tabular}[c]{@{}l@{}}H.sapiens\\ M. musculus\\ \hfill\end{tabular}} &
+            \begin{tabular}[c]{@{}l@{}}680 (human)\\ 453 (mouse)\end{tabular} \\ 
+            &
+            JASPAR &
+            \cite{sandelin2004jaspar,fornes2020jaspar} &
+            \begin{tabular}[c]{@{}l@{}}PWMs\\ DWMs\end{tabular} &
+            53 species\\ \hfill &
+            \textgreater 1,500 \\ 
+            &
+            Cis-BP &
+            \cite{weirauch2014determination} &
+            PWMs &
+            \textit{\begin{tabular}[c]{@{}l@{}}A. thaliana\\ C. elegans\\ D. rerio\\ D. melanogaster\\ H. sapiens\\ M. musculus\\ N. crassa\\ R. norvegicus\\ S. cerevisiae\\ X. tropicalis\\ \hfill\end{tabular}} &
+            \textgreater 5,000 \\
+            &
+            TRANSFAC &
+            \cite{wingender1996transfac,wingender2000transfac} &
+            PWMs &
+            \textgreater 300 species\\ \hfill &
+            \textgreater 10,000 \\ 
+            &
+            FactorBook &
+            \cite{pratt2022factorbook} &
+            PWMs &
+            \textit{\begin{tabular}[c]{@{}l@{}}H. sapiens\\ M. musculus\\ \hfill\end{tabular}} &
+            \begin{tabular}[c]{@{}l@{}}881 (human)\\ 49 (mouse)\end{tabular} \\ 
+            &
+            UniPROBE &
+            \cite{newburger2009uniprobe} &
+            PWMs &
+            \textit{\begin{tabular}[c]{@{}l@{}}C. elegans\\ C. parvum\\ H. sapiens\\ M. musculus\\ P. falciparum\\ S. cerevisiae\\ V. harveyi\\ \hfill\end{tabular}} &
+            726 \\ 
+            &
+            Unibind &
+            \cite{puig2015human} &
+            PWMs &
+            \textit{\begin{tabular}[c]{@{}l@{}}A. thaliana\\ C. elegans\\ D. rerio\\ D. melanogaster\\ H. sapiens\\ M. musculus\\ R. norvegicus\\ S. cerevisiae\\ S. pombe\\ \hfill\end{tabular}} &
+            841 \\ \hline
+            \begin{tabular}[c]{@{}l@{}}TF-target gene interaction\\ database\end{tabular} &
+            HTRIdb &
+            \cite{bovolenta2012htridb} &
+            \begin{tabular}[c]{@{}l@{}}TF-gene interaction\\ networks\end{tabular} &
+            \textit{H. sapiens} &
+            284 \\ \hline
+            \begin{tabular}[c]{@{}l@{}}TF-disease association\\ database\end{tabular} &
+            TFcancer &
+            \cite{huang2021tfcancer} &
+            TF-cancer associations &
+            \textit{H. sapiens} &
+            364 \\ \hline
+        \end{tabular}%
+    }
+    \caption[Transcription Factor Databases]{\textbf{Transcription Factor Databases.} The table provides a condensed overview of the TF-related databases discussed in \textbf{Section 4.2.3}. It outlines key aspects for each database, including its primary purpose (\textbf{Type}), the variety of available data types (\textbf{Data type}), the model organisms covered by the database (\textbf{Model organisms}), and the total number of included TFs (\textbf{TFs}).}
+    \label{tab:motif_databases}
 \end{table}
+
+% ---- Downstream analysis using Transcription Factor Binding Site motifs
+\subsection{Downstream analysis using Transcription Factor Binding Site motifs}
+The discovered motifs serve various purposes in downstream analyses, including motif comparison, motif scanning, motif enrichment analysis, and evaluating the effects of genetic variants on TF–DNA binding affinity \citep{tognon2023survey}. Motif comparison measures the similarity between the discovered motifs and annotated TFBS, facilitating the connection of known TFs to newly identified motifs \citep{gupta2007quantifying}. Tools such as Tomtom \citep{gupta2007quantifying}, STAMP \citep{mahony2007stamp}, MACRO-APE \citep{vorontsov2013jaccard}, or MoSBAT \citep{lambert2016motif} are commonly used for this task, searching annotated databases for motifs matching the input consensus sequence or inferred motif matrix. Additionally, motif comparison tools have been developed to interpret and annotate potential motifs encoded in the convolutional filters of CNN models. Motif scanning involves searching sets of genomic regions for potential occurrences of the input motif, aiming to recover potential binding locations for the investigated factor. Motif scanning algorithms assign scores to sequences using the input model (e.g., a PWM). A challenge in motif scanning is the choice of a reliable cutoff for discriminating between true and false binding events \citep{boeva2016analysis}. Several motif scanning tools are available, such as \citep{korhonen2009moods}, FIMO \citep{grant2011fimo}, PWMscan \citep{ambrosini2018pwmscan}, and the HOMER suite \citep{heinz2010simple}. Recently, MOODS has been extended to search instances of motifs modeled as high-order PWMs \citep{korhonen2017fast}. However, motif scanning algorithms generally do not consider individual- and population-specific genetic variants and haplotypes while searching for potential motif occurrences. This may result in several potential TFBS missed and missing information which could facilitate the interpretation of genetic variants impact within the cell. Motif enrichment analysis (MEA) investigates over- and underrepresented motifs in gene regulatory regions, linking investigated TFs to their functions within the cell environment. MEA involves scanning regulatory regions for motif occurrences and statistically testing motif enrichment. There are many MEA tools available, such as Clover \citep{frith2004detection}, Pscan \citep{zambelli2009pscan}, AME \citep{mcleay2010motif}, or oPOSSUM-3 \citep{kwon2012opossum} are commonly used for MEA. The HOMER suite provides MEA functionality. Haystack \citep{pinello2018haystack} proposed an integrated MEA strategy, exploring motif enrichment in cell-type-specific regions and incorporating gene expression data to assess the transcriptional activity of studied factors and their impact on regulated genes.
+
+% ---- Evaluating genetic variants impact on Transcription Factor Binding Sites
+\subsection{Evaluating genetic variants impact on Transcription Factor Binding Sites}
+Genetic variants have been demonstrated to influence TF–DNA binding events \citep{de2006regulatory,wienert2015editing,weinhold2014genome}, with implications for common diseases through their association with regulatory elements \citep{maurano2012systematic}. These variants have the potential to alter the transcriptional state of the cell \citep{deplancke2016genetics}, leading to an increasing interest in developing tools to predict the impact of variants on TFBS (\textbf{Table \ref{tab:variants_tools_motif}}). TRAP \citep{thomas2011transcription} and CATO \citep{maurano2015large} employ PWMs to predict variant impact on TFBS by comparing binding affinity scores between reference and alternative sequences. TRAP repeats this process across a collection of TFBS, reporting the motif with the most significant score change. CATO, on the other hand, generates a ranked list of disrupted motifs using a logistic model trained with information content differences, TF occupancy, and phylogenetic conservation between reference and alternative sequences. However, these methods face scalability issues when analyzing thousands of SNPs. atSNP \citep{zuo2015atsnp} introduces a scalable strategy to assess the impact of thousands of SNPs on TFBS by computing statistical significance for the affinity score differences between reference and alternative sequences using PWMs. DeltaSVM \citep{lee2015method} and GkmExplain \citep{shrikumar2019gkmexplain} use SVM-based motif models to evaluate variant impact. DeltaSVM scans DNA positions overlapping each SNP, computing the difference between reference and alternative sequence scores using a pretrained list of $k$-mers with associated weights. However, it assesses the impact of individual variants without accounting for relationships between variants. GkmExplain overcomes this limitation by considering the impact of variants not at individual positions but on sequence features, such as entire $k$-mers. DeepBind \citep{alipanahi2015predicting} and DeepSEA \citep{zhou2015predicting} employ DNN-based models to predict variant impact on TFBS. DeepBind uses mutation maps to assess the effect of variants on binding affinities, considering the importance of each motif position within the model. DeepSEA uses in silico saturated mutagenesis to predict the impact of individual variants on the whole sequence context and features like TFBS. Similarly, Basset \citep{kelley2016basset} uses \emph{in silico} saturated mutagenesis by learning critical nucleotides governing chromatin accessibility, assigning importance scores to each position in the input sequences and attempting to map the variants' impact to the TFBS. Basenji \citep{kelley2018sequential} extends Basset’s workflow by providing functional annotations to SNPs affecting sequence features and TFBS, and returning potential changes in gene expression patterns. However, Basenji is limited to predicting SNP effects on distal regulatory elements within a 20 kb range. Enformer \citep{avsec2021effective} overcomes this limitation by employing transformer architectures to extend the range up to 200 kb, providing a more comprehensive and accurate assessment of the functional effects of variants on sequence elements and gene expression.
+
+% - table: Software to assess genetic variants impact on Transcription Factor Binding Sites
+\begin{table}[!]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        \textbf{Motif model} &
+        \textbf{Software} &
+        \textbf{Reference} &
+        \textbf{\begin{tabular}[c]{@{}l@{}}Original input\\ data type\end{tabular}} &
+        \textbf{Output} &
+        \textbf{Year} \\ \hline
+        PWM &
+        TRAP &
+        \cite{thomas2011transcription} &
+        ChIP-seq &
+        \begin{tabular}[c]{@{}l@{}}Allele-specific\\ score \\ \hfill \end{tabular} &
+        2011 \\
+        &
+        CATO score &
+        \cite{maurano2015large} &
+        DHS sites &
+        \begin{tabular}[c]{@{}l@{}}Ranked list of\\ TFBS affected\\ by SNPs \\ \hfill\end{tabular} &
+        2015 \\ 
+        &
+        atSNP &
+        \cite{zuo2015atsnp} &
+        \begin{tabular}[c]{@{}l@{}}Sequences \\ overlapping\\ input SNPs\end{tabular} &
+        \begin{tabular}[c]{@{}l@{}}Allele-specific\\ score \\ \hfill \end{tabular} &
+        2015 \\ \hline
+        SVM-based &
+        DeltaSVM &
+        \cite{lee2015method} &
+        DNase-seq &
+        \begin{tabular}[c]{@{}l@{}}Allele-specific\\ score \\ \hfill \end{tabular} &
+        2015 \\ 
+        &
+        GkmExplain &
+        \cite{shrikumar2019gkmexplain} &
+        DNase-seq &
+        \begin{tabular}[c]{@{}l@{}}SNP impact on\\ whole TFBS \\ \hfill \end{tabular} &
+        2019 \\ \hline
+        DNN-based &
+        DeepBind &
+        \cite{alipanahi2015predicting} &
+        \begin{tabular}[c]{@{}l@{}}ChIP-seq\\ HT-SELEX\end{tabular} &
+        \begin{tabular}[c]{@{}l@{}}Single SNP \\ impact \\ \hfill \end{tabular} &
+        2015 \\ 
+        &
+        DeepSEA &
+        \cite{zhou2015predicting} &
+        \begin{tabular}[c]{@{}l@{}}ATAC-seq\\ DNase-seq\end{tabular} &
+        \begin{tabular}[c]{@{}l@{}}Single SNP\\ impact \\ \hfill \end{tabular} &
+        2015 \\ 
+        &
+        Basset &
+        \cite{kelley2016basset} &
+        \begin{tabular}[c]{@{}l@{}}ChIP-seq\\ DNase-seq\end{tabular} &
+        \begin{tabular}[c]{@{}l@{}}Single SNP \\ impact \\ \hfill \end{tabular} &
+        2016 \\ 
+        &
+        Basenji &
+        \cite{kelley2018sequential} &
+        \begin{tabular}[c]{@{}l@{}}ChIP-seq\\ DNase-seq\end{tabular} &
+        \begin{tabular}[c]{@{}l@{}}Single SNP\\ impact \\ \hfill \end{tabular} &
+        2018 \\ 
+        &
+        Enformer &
+        \cite{avsec2021effective} &
+        DNA sequences &
+        \begin{tabular}[c]{@{}l@{}}SNP functional\\ impact \\ \hfill \end{tabular} &
+        2021 \\ \hline
+    \end{tabular}%
+    }
+    \caption[Software to assess genetic variants impact on Transcription Factor Binding Sites]{\textbf{Software to assess genetic variants impact on Transcription Factor Binding Sites} The table provides a comprehensive overview of tools for predicting the impact of variants on TFBS. For each tool, the table presents details such as the utilized TFBS model (\textbf{Motif model}), the original data type used for testing in their original publication (\textbf{Original input data type}), the output type (\textbf{Output}), the year of publication (\textbf{Year}), and the corresponding reference (\textbf{Reference}).}
+    \label{tab:variants_tools_motif}
+\end{table}
+
+% ---- Limitations on current Transcription Factor Binsing Site Motif analysis
+\subsection{Limitations on current Transcription Factor Binsing Site Motif analysis}
+The exploration of TFBS motifs in DNA sequences has been an extensively studied domain over the past few decades. This section delved into diverse algorithms and computational models dedicated to the discovery and representation of motifs. However, several unresolved issues and potential avenues for further research persist in this field. The ongoing debate revolves around the selection between simple and complex motif discovery algorithms. Enumerative and alignment-based methods, despite their simplicity, have exhibited comparable performance in terms of scalability and accuracy when juxtaposed with complex methods \citep{weirauch2013evaluation}. Notably, these methods offer user-friendly interfaces and typically require no specialized computational expertise. Additionally, they can be applied to any sequence dataset without necessitating additional information beyond the sequences themselves. Well-established tools like MEME \citep{bailey1994fitting,bailey1995value,bailey2006meme}, HOMER \citep{heinz2010simple}, and the newer STREME \citep{bailey2021streme} continue to be popular due to their user community support and continued maintenance. In contrast, probabilistic graphical model-based algorithms often grapple with scalability issues, particularly when analyzing thousands of sequences due to the intricate nature of model training involving dependencies.
+
+SVM-based methods have demonstrated commendable scalability and accuracy in discovering TFBS motifs and predicting PBM binding affinities across diverse sequence datasets. One of the pivotal advantages of SVM-based algorithms lies in their ability to learn features across the entire sequence context, contributing to their efficacy in motif discovery. However, the performance of SVM-based methods is heavily contingent on the quality of the background dataset, which needs careful design based on various sequence characteristics.
+
+DNN-based motif discovery algorithms have showcased high accuracy compared to other methods, albeit with increased complexity requiring expertise and fine parameter tuning. While scalable in terms of dataset size, DNN-based methods often demand substantial computational resources and dedicated hardware components for effective model training. Despite these challenges, DNN-based methods are gaining popularity within the community.
+
+The ongoing discourse revolves around determining the best method, and while several papers have benchmarked motif discovery algorithms on diverse datasets, comprehensive benchmarks considering a wide range of datasets and methods from different algorithm classes are imperative for robust evaluations.
+
+The debate surrounding motif models capturing dependencies within TFBS positions has persisted over the last decades. Despite the expectation that probabilistic models would outperform simpler models like PWMs, studies have shown comparable performance, particularly for TFs exhibiting degenerate binding sequences. PWMs, accommodating variations to the motif consensus, can capture a broader range of target sites, including weakly bound ones, at the expense of increased susceptibility to noise and potential recovery of false positives. Probabilistic graphical models, by encoding dependencies, are anticipated to provide more robust models but are prone to overfitting if not appropriately trained. SVM-based motif models generally outperform PWMs, but their interpretability is sacrificed when reduced to PWMs for visualization. Recent studies indicate that DNN-based models better capture sequence specificities underlying TF–DNA interactions, though they are often reduced to PWMs for interpretability.
+
 
 
 % ------- Predicting genetic variants impact on transcription factor binding sites
