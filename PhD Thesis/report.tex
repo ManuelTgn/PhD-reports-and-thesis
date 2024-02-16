@@ -1797,23 +1797,375 @@ Deep neural networks (DNNs) have demonstrated considerable success in addressing
 
 % ----- Catalogue of Motif discovery algorithms and software for discover Transcription Factor Binding sites in DNA sequences
 \section{Catalogue of Motif discovery algorithms and software for discover Transcription Factor Binding sites in DNA sequences}\label{section:algorithms-table-appendix}
-The table in this section lists the algorithms discussed in \textbf{Section 4.2.2}, and provides information for each algorithm, including associated publications (\textbf{Refs.}), the original data type used for development and testing in the original publication (\textbf{Original input data type}), the motif model returned (\textbf{Output}), theoretical advantages (\textbf{Pros}), drawbacks (\textbf{Cons}), the year of publication (\textbf{Year}), a link to the code or website (\textbf{Availability}), and details on how each software is distributed to the community (\textbf{Availability type}).
+\textbf{Table B.2. Motif discovery algorithms and software for discover Transcription Factor Binding sites in DNA sequences.} The table in this section lists the algorithms discussed in \textbf{Section 4.2.2}, and provides information for each algorithm, including associated publications (\textbf{Refs.}), the original data type used for development and testing in the original publication (\textbf{Original input data type}), the motif model returned (\textbf{Output}), theoretical advantages (\textbf{Pros}), drawbacks (\textbf{Cons}), the year of publication (\textbf{Year}), a link to the code or website (\textbf{Availability}), and details on how each software is distributed to the community (\textbf{Availability type}).
 
 % - table: Motif discovery algorithms and software for discover Transcription Factor Binding sites in DNA sequences
 \begin{table}[H]
 \centering
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
-\hline
-\textbf{Motif discovery method} & \textbf{Algorithm} & \textbf{Refs.} & \textbf{Original input data type} & \textbf{Output} & \textbf{Pros} & \textbf{Cons} & \textbf{Year} & \textbf{Availability} & \textbf{Availability type} \\ \hline
-                       &           &                              &                                                   &        &                             &                             &      &              &                   \\ \hline
-                       &           &                              &                                                   &        &                             &                             &      &              &                   \\ \hline
-                       &           &                              &                                                   &        &                             &                             &      &              &                   \\ \hline
-                       &           &                              &                                                   &        &                             &                             &      &              &                   \\ \hline
-                       &           &                              &                                                   &        &                             &                             &      &              &                   \\ \hline
+\resizebox{\columnwidth}{!}{%
+    \begin{tabular}{|l|l|l|l|l|l|l|l|}
+        \hline
+        \textbf{\begin{tabular}[c]{@{}l@{}}Motif discovery \\ method\end{tabular}} &
+          \textbf{Algorithm} &
+          \textbf{Refs} &
+          \textbf{Original input data} &
+          \textbf{Output} &
+          \textbf{Pros} &
+          \textbf{Cons} &
+          \textbf{Year} \\ \hline
+         &
+          SPLASH &
+          \cite{califano2000splash} &
+          \begin{tabular}[c]{@{}l@{}}DNA sequences \\ (unspecified source)\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Regular \\ Expression \\ \hfill \end{tabular} &
+          Simple output &
+          \begin{tabular}[c]{@{}l@{}}Fixed mismatch\\ positions\end{tabular} &
+          2000 \\ 
+         &
+          Weeder &
+          \begin{tabular}[c]{@{}l@{}}\cite{pavesi2001algorithm} \\ \cite{pavesi2004weeder}\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}DNA sequences \\ (unspecified source)\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ Consensus\\ sequence \\ \hfill \end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Simple output;\\ use biological data\\ as background dataset\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Not scalable on \\ large datasets\end{tabular} &
+          2001 \\ 
+         &
+          SMILE &
+          \cite{marsan2000algorithms} &
+          \begin{tabular}[c]{@{}l@{}}DNA sequences \\ (unspecified source)\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Consensus \\ sequence\end{tabular} &
+          Simple output &
+          \begin{tabular}[c]{@{}l@{}}Not scalable on\\ large datasets\end{tabular} &
+          2000 \\ 
+         &
+          MDScan &
+          \cite{liu2002algorithm} &
+          ChIP-on-Chip &
+          PWM &
+          \begin{tabular}[c]{@{}l@{}}Use 3rd-order MMs\\ as background\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Based on word\\ enumeration \\ (computationally\\ intensive)\end{tabular} &
+          2002 \\ 
+         &
+          Amadeus &
+          \cite{linhart2008transcription} &
+          ChIP-on-Chip &
+          PWM &
+          \begin{tabular}[c]{@{}l@{}}Use hypergeometric\\ test to evaluate motifs\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Based on word\\ enumeration\\ (computationally\\ intensive)\end{tabular} &
+          2008 \\ 
+          Enumerative &
+          DREME &
+          \cite{bailey2011dreme} &
+          ChIP-seq &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ consensus\\ sequence\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Detailed output;\\ use Fisher's exact test\\ to evaluate motifs \\ \hfill \end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Based on regular\\ expression\end{tabular} &
+          2011 \\ 
+         &
+          Trawler &
+          \cite{ettwiller2007trawler} &
+          ChIP-on-Chip &
+          PWM &
+          \begin{tabular}[c]{@{}l@{}}Use STs for fast motif \\ search; use binomial\\ distribution to evaluate\\ motifs \\ \hfill \end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Method performance\\ rely on suitable \\ background\end{tabular} &
+          2007 \\ 
+         &
+          HOMER &
+          \cite{heinz2010simple} &
+          ChIP-seq &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ consensus\\ sequence\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Detailed output;\\ use ST for fast motif \\ search;\\ use hypergeometric \\ distribution to evaluate\\ motifs; well maintained\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Motif statistical \\ significance not \\ reported\end{tabular} &
+          2010 \\ \hline
+    \end{tabular}%
+}
+\caption*{}
+\label{tab:motif_discovery_algorithms}
+\end{table}
+
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+    \hline
+    \textbf{\begin{tabular}[c]{@{}l@{}}Motif discovery \\ method\end{tabular}} &
+          \textbf{Algorithm} &
+          \textbf{Refs} &
+          \textbf{Original input data} &
+          \textbf{Output} &
+          \textbf{Pros} &
+          \textbf{Cons} &
+          \textbf{Year} \\ \hline
+     &
+      STREME &
+      \cite{bailey2021streme} &
+      ChIP-seq &
+      \begin{tabular}[c]{@{}l@{}}PWM/\\ consensus\\ sequence\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Detailed output;\\ use ST and seed words\\ evaluation for fast motif\\ search\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Assumes that each \\ sequence contains one\\ or zero motif occurrences;\\ requires that more than one\\ sequence contains the motif\\ the report results\end{tabular} &
+      2021 \\ \hline
+       &
+      CONSENSUS &
+      \cite{hertz1999identifying} &
+      \begin{tabular}[c]{@{}l@{}}DNA sequences\\ (unspecified source) \\ \hfill\end{tabular} &
+      PWM &
+      Simple approach &
+      \begin{tabular}[c]{@{}l@{}}Method performance \\ rely on motif conservation\end{tabular} &
+      1999 \\
+     &
+      MEME &
+      \begin{tabular}[c]{@{}l@{}}\cite{bailey1994fitting} \\ \cite{bailey1995value} \\ \cite{bailey2006meme} \\ \hfill \\ \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}DNA sequences\\ (unspecified source)\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}PWM/\\ consensus\\ sequence\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Detailed output;\\ fast motif search;\\ well maintained\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}EM may converge \\ prematurely\end{tabular} &
+      1994 \\
+     &
+      Motif Sampler &
+      \cite{neuwald1995gibbs} &
+      \begin{tabular}[c]{@{}l@{}}DNA sequences\\ (unspecified source)\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Consensus\\ sequence\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Overcome EM \\ limitation\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large\\ datasets;\\ stochastic nature of Gibbs\\ sampling \\ \hfill \end{tabular} &
+      1995 \\
+     &
+      Align-ACE &
+      \cite{hughes2000computational} &
+      \begin{tabular}[c]{@{}l@{}}DNA sequences\\ (unspecified source)\end{tabular} &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Overcome EM\\ limitation\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large\\ datasets;\\ stochastic nature of Gibbs \\ sampling \\ \hfill \end{tabular} &
+      2000 \\
+     &
+      ANN-spec &
+      \cite{workman1999ann} &
+      \begin{tabular}[c]{@{}l@{}}DNA sequences\\ (unspecified source)\end{tabular} &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Overcome EM\\ limitation\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large\\ datasets;\\ use ANN replacing to\\ replace alignment profiles\\ (computationally intensive) \\ \hfill \end{tabular} &
+      2000 \\
+     &
+      BioProspector &
+      \cite{liu2000bioprospector} &
+      ChIP-on-Chip &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Use 3rd-order MMs\\ as background\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large \\ datasets;\\ stochastic nature of Gibbs \\ sampling\end{tabular} &
+      2002 \\
+      Alignment-based &
+      MotifSampler &
+      \cite{thijs2001higher} &
+      \begin{tabular}[c]{@{}l@{}}DNA sequences\\ (unspecified source)\end{tabular} &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Use 3rd-order MMs\\ as background\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large \\ datasets;\\ stochastic nature of Gibbs \\ sampling \\ \hfill \end{tabular} &
+      2001 \\
+     &
+      GLAM2 &
+      \begin{tabular}[c]{@{}l@{}} \cite{frith2004detection} \\ \cite{frith2008discovering} \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}DNA sequences\\ (unspecified source)\end{tabular} &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Estimate optimal \\ alignment length;\\ allow gapped motifs;\\ well maintained \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large \\ datasets;\\ stochastic nature of Gibbs\\ sampling\end{tabular} &
+      2008 \\
+     &
+      GADEM &
+      \cite{li2009gadem} &
+      \begin{tabular}[c]{@{}l@{}}ChIP-on-Chip;\\ ChIP-seq\end{tabular} &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Overcome EM \\ limitation\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large \\ datasets;\\ genetic algorithms are \\ computationally intensive \\ \hfill \end{tabular} &
+      2009 \\
+     &
+      MEME-ChIP &
+      \cite{machanick2011meme} &
+      ChIP-seq &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Scalable on large datasets;\\ well maintained\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Consider random \\subsamples of the input \\ dataset \\ \hfill \end{tabular} &
+      2011 \\
+     &
+      STEME &
+      \cite{reid2011steme} &
+      \begin{tabular}[c]{@{}l@{}}ChIP-on-Chip;\\ ChIP-seq\end{tabular} &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Scalable on large datasets;\\ faster MEME-like EM\\ motif search \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Computationally intensive\\ ST construction\end{tabular} &
+      2011 \\
+     &
+      ChIPMunk &
+      \cite{kulakovskiy2010deep} &
+      ChIP-seq &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Scalable on large datasets;\\ accounts for ChIP-seq peaks\\ shape during motif search;\\ well maintained \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}EM may converge \\ prematurely \end{tabular} &
+      2010 \\
+     &
+      XXmotif &
+      \cite{hartmann2013p} &
+      \begin{tabular}[c]{@{}l@{}}ChIP-on-Chip;\\ ChIP-seq\end{tabular} &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Integrate enumerativa and\\ alignment-based motif\\ search \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}May be computationally\\ intensive on large\\ datasets\end{tabular} &
+      2013 \\
+     &
+      ProSampler &
+      \cite{li2019prosampler} &
+      ChIP-seq &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Scalable on large datasets;\\ ultra-fast motif search\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Stochastic nature of Gibbs \\ sampling\end{tabular} &
+      2019 \\ \hline
+      &
+      Dimont &
+      \cite{grau2013general} &
+      \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ ChIP-exo;\\ PBM\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Consensus\\ sequence/\\ High-order\\ PWM\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Scalable on large \\ datasets;\\ include dependencies\\ during motif search \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Ignore non-neighboring\\ dependencies\end{tabular} &
+      2013 \\
+      &
+      diChIPMunk &
+      \cite{kulakovskiy2013binding} &
+      ChIP-seq &
+      \begin{tabular}[c]{@{}l@{}}High-order\\ PWM\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Include dependencies\\ during motif search;\\ well maintained \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Not scalable on large\\ datasets\end{tabular} &
+      2013 \\
+     &
+      TFFM &
+      \cite{mathelier2013next} &
+      ChIP-seq &
+      \begin{tabular}[c]{@{}l@{}}PWM/\\ High-order\\ PWM\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ include dependencies\\ during motif search;\\ accomodate variable \\ motif length \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Depend on MEME\\ motif discovery results\end{tabular} &
+      2013 \\
+     \begin{tabular}[c]{@{}l@{}}Probabilistic \\ graphical models\end{tabular} &
+      Discrover &
+      \cite{maaskola2014binding} &
+      ChIP-seq &
+      PWM &
+      \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ use HMMs \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Ignore non-neighboring\\ dependencies\end{tabular} &
+      2014 \\
+      &
+      Slim &
+      \cite{keilwagen2015varying} &
+      \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ PBM\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}High-order\\ PWM\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Include neighboring \\ and non-neighboring\\ variable-order\\ dependencies \\ \hfill \end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Computationally\\ intensive\end{tabular} &
+      2015 \\ 
+     &
+      BaMMotif &
+      \begin{tabular}[c]{@{}l@{}}\cite{siebert2016bayesian} \\ \cite{ge2021bayesian} \end{tabular} &
+      ChIP-seq &
+      \begin{tabular}[c]{@{}l@{}}High-order\\ PWM\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Include high-order\\ dependencies;\\ avoid model overfitting\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Computationally \\ intensive motif search;\\ depends on XXmotif\\ motif discovery results\end{tabular} &
+      2016 \\ \hline
 \end{tabular}%
 }
-\caption[Motif discovery algorithms and software for discover Transcription Factor Binding sites in DNA sequences]{\textbf{Motif discovery algorithms and software for discover Transcription Factor Binding sites in DNA sequences.}}
+\caption*{}
+\label{tab:motif_discovery_algorithms}
+\end{table}
+
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{%
+    \begin{tabular}{|l|l|l|l|l|l|l|l|}
+        \hline
+        \textbf{\begin{tabular}[c]{@{}l@{}}Motif discovery \\ method\end{tabular}} &
+          \textbf{Algorithm} &
+          \textbf{Refs} &
+          \textbf{Original input data} &
+          \textbf{Output} &
+          \textbf{Pros} &
+          \textbf{Cons} &
+          \textbf{Year} \\ \hline
+          &
+          Kmer-SVM &
+          \begin{tabular}[c]{@{}l@{}}\cite{lee2011discriminative}\\ \cite{fletez2013kmer}\end{tabular} &
+          ChIP-seq &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ k-mer-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Limited to short\\ motifs;\\ Computationally\\ intensive;\\ rely on suitable \\ background \\ \hfill \end{tabular} &
+          2011 \\
+         \begin{tabular}[c]{@{}l@{}}Support Vector\\ Machines\end{tabular} &
+          Agius et al. &
+          \cite{agius2010high} &
+          \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ PBM\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ k-mer-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Limited to short\\ motifs;\\ Computationally\\ intensive;\\ rely on suitable\\ background \\ \hfill \end{tabular} &
+          2010 \\
+         &
+          Gkm-SVM &
+          \cite{ghandi2014enhanced} &
+          ChIP-seq &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ k-mer-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ consider long motifs\\ using gapped k-mers \\ \hfill \end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Computationally \\ intensive;\\ rely on suitable\\ background\end{tabular} &
+          2014 \\
+         &
+          LS-GKM &
+          \cite{lee2016ls} &
+          ChIP-seq &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ k-mer-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Improve Gkm-SVM\\ perfomance on large\\ datasets;\\ introduce additional\\ kernels\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Rely on suitable \\ background\end{tabular} &
+          2016 \\ \hline
+          &
+          DeepBind &
+          \cite{alipanahi2015predicting} &
+          \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ HT-SELEX;\\ PBM\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ DNN-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ integrate different\\ genomic data\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Computationally\\ intensive training;\\ ignore kernel \\ dependencies during\\ motif reconstruction \\ \hfill \end{tabular} &
+          2015 \\
+         &
+          Basset &
+          \cite{kelley2016basset} &
+          \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ DNase-seq\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ DNN-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ integrate different\\ genomic data\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Computationally\\ intensive training;\\ ignore kernel \\ dependencies during\\ motif reconstruction \\ \hfill \end{tabular} &
+          2016 \\
+         &
+          BPNet &
+          \cite{avsec2021base} &
+          \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ ChIP-exo\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ DNN-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ integrate different\\ genomic data;\\ account for kernel\\ dependencies during\\ motif reconstruction;\\ well maintained \\ \hfill \end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Computationally \\ intensive training\end{tabular} &
+          2021 \\
+         \begin{tabular}[c]{@{}l@{}}Deep Neural\\ Networks\end{tabular} &
+          DeeperBind &
+          \cite{hassanzadeh2016deeperbind} &
+          PBM &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ DNN-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ integrate short-range\\ dependencies in\\ sequences \\ \hfill \end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Computationally\\ intensive training;\\ not maintained\end{tabular} &
+          2016 \\
+         &
+          DanQ &
+          \cite{quang2016danq} &
+          \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ DNase-seq\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ DNN-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large \\ datasets;\\ integrate different \\ genomic data;\\ integrate long- and \\ short-range dependencies\\ in sequences \\ \hfill \end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Computationally\\ intensive training;\\ weights differently \\ sequences on positive\\ and reverse strands\end{tabular} &
+          2016 \\
+         &
+          FactorNet &
+          \cite{quang2019factornet} &
+          \begin{tabular}[c]{@{}l@{}}ChIP-seq;\\ DNase-seq\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}PWM/\\ DNN-based\\ model\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Scalable on large\\ datasets;\\ integrate different \\ genomic data;\\ weights identically \\ positive and reverse \\ strands\end{tabular} &
+          \begin{tabular}[c]{@{}l@{}}Computationally \\ intensive training\end{tabular} &
+          2019 \\ \hline
+    \end{tabular}%
+}
+\caption*{}
 \label{tab:motif_discovery_algorithms}
 \end{table}
 
